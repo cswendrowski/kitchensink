@@ -1,0 +1,17 @@
+{
+    "Actor": {
+        "types": [ "hero","npc" ],
+        "htmlFields": ["description" ,"htmlfield","background" ],
+        "hero": {},
+        "npc": {}
+        
+    },
+    "Item": {
+        "types": [ "skill","equipment","spell","potion" ],
+        "htmlFields": [ "description"  ],
+        "skill": {},
+        "equipment": {},
+        "spell": {},
+        "potion": {}
+    }
+}

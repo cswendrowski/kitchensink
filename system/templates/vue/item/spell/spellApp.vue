@@ -1,0 +1,566 @@
+<script setup>
+    import { ref, watch, inject, computed, watchEffect } from "vue";
+    import spellRollAction from './components/actions/spellRollAction.vue';
+    import KitchenSinkRoll from "../../../../rolls/roll.mjs";
+    import DataTable from 'datatables.net-vue3';
+    import DataTablesCore from 'datatables.net-dt';
+    import 'datatables.net-responsive-dt';
+    import 'datatables.net-colreorder-dt';
+    import 'datatables.net-rowreorder-dt';
+    import 'datatables.net-buttons-dt';
+    import ColVis from "datatables.net-buttons/js/buttons.colVis";
+
+    DataTable.use(DataTablesCore);
+    DataTable.use(ColVis);
+
+    const document = inject('rawDocument');
+    const props = defineProps(['context']);
+
+    // Colors
+    let storedColors = game.settings.get('kitchen-sink', 'documentColorThemes');
+    const primaryColor = ref(storedColors[document.uuid]?.primary ?? '#1565c0');
+    const secondaryColor = ref(storedColors[document.uuid]?.secondary ?? '#4db6ac');
+    const tertiaryColor = ref(storedColors[document.uuid]?.tertiary ?? '#ffb74d');
+
+    const setupColors = () => {
+        const colors = {
+            primary: primaryColor.value,
+            secondary: secondaryColor.value,
+            tertiary: tertiaryColor.value
+        };
+        game.settings.set('kitchen-sink', 'documentColorThemes', { ...storedColors, [document.uuid]: colors });
+    };
+    const resetColors = () => {
+        primaryColor.value = '#1565c0';
+        secondaryColor.value = '#4db6ac';
+        teritaryColor.value = '#ffb74d';
+        setupColors();
+    };
+
+    watch(primaryColor, () => {
+        setupColors();
+    });
+    watch(secondaryColor, () => {
+        setupColors();
+    });
+    watch(tertiaryColor, () => {
+        setupColors();
+    });
+
+    // Pages and Tabs
+    const lastStates = game.settings.get('kitchen-sink', 'documentLastState');
+    const lastState = lastStates[document.uuid] ?? {
+        page: 'spell',
+        tab: 'description'
+    };
+
+    const drawer = ref(false);
+    const page = ref(lastState.page);
+    const tab = ref(lastState.tab);
+    const pageDefaultTabs = {
+        'spell': 'description',
+    };
+
+    const updateLastState = () => {
+        const lastStates = game.settings.get('kitchen-sink', 'documentLastState');
+        lastStates[document.uuid] = { page: page.value, tab: tab.value };
+        game.settings.set('kitchen-sink', 'documentLastState', lastStates);
+    };
+
+    // When the page changes, reset the tab to the first tab on that page
+    watch(page, () => {
+        tab.value = pageDefaultTabs[page.value.toLowerCase()];
+        document.sheet.dragDrop.forEach((d) => d.bind(document.sheet.element));
+        // Dismiss the drawer when the page changes
+        drawer.value = false;
+        updateLastState();
+    });
+
+    watch(tab, () => {
+        document.sheet.dragDrop.forEach((d) => d.bind(document.sheet.element));
+        updateLastState();
+    });
+
+    const pageBackgrounds = {
+        'spell': 'topography',
+    };
+
+    const pageBackground = computed(() => {
+        if (editModeRef.value) {
+            return 'edit-mode';
+        }
+        if (props.context.system.dead) {
+            return 'dead';
+        }
+        return pageBackgrounds[page.value];
+    });
+
+    // Edit Mode
+    const editModeRef = ref(document.getFlag('kitchen-sink', 'edit-mode') ?? true);
+    const hovered = ref(false);
+
+    const toggleEditMode = () => {
+        editModeRef.value = !editModeRef.value;
+        document.setFlag('kitchen-sink', 'edit-mode', editModeRef.value);
+    };
+
+    function spawnDatatableWindow(e, pageName, tabName) {
+        if (event.button === 1) {
+            event.preventDefault();
+            event.stopPropagation();
+            const tableName = `itemSpell${pageName}${tabName}`;
+            const systemName = "system." + tabName.toLowerCase();
+            const sheet = new game.system.datatableApp(document, tableName, systemName, tabName);
+            sheet.render(true);
+        }
+    }
+
+    // Effects
+    const effects = ref([]);
+
+    function updateEffects() {
+        effects.value = Array.from(document.allApplicableEffects());
+    }
+
+    updateEffects();
+
+    Hooks.on("createActiveEffect", updateEffects);
+    Hooks.on("updateActiveEffect", updateEffects);
+    Hooks.on("deleteActiveEffect", updateEffects);
+
+    const getEffect = (id) => {
+        let ae = document.effects.get(id);
+        if (ae) return ae;
+        ae = document.items.find(i => i.effects.has(id)).effects.get(id);
+        if (!ae) {
+            console.error("Could not find effect with id: " + id);
+            return;
+        }
+        return ae;
+    }
+
+    const editEffect = (rowData) => {
+        const effect = getEffect(rowData._id);
+        effect.sheet.render(true);
+    };
+
+    const toggleEffect = (rowData) => {
+        const effect = getEffect(rowData._id);
+        effect.disabled = !effect.disabled;
+        rowData.disabled = effect.disabled;
+        document.updateEmbeddedDocuments("ActiveEffect", [effect]);
+    };
+
+    const sendEffectToChat = async (rowData) => {
+        const effect = getEffect(rowData._id);
+        const chatDescription = effect.description ?? effect.system.description;
+        const content = await renderTemplate("systems/kitchen-sink/system/templates/chat/standard-card.hbs", { 
+            cssClass: "kitchen-sink",
+            document: effect,
+            hasEffects: false,
+            description: chatDescription,
+            hasDescription: chatDescription != ""
+        });
+        ChatMessage.create({
+            content: content,
+            speaker: ChatMessage.getSpeaker(),
+            style: CONST.CHAT_MESSAGE_STYLES.IC
+        });
+    };
+
+    const deleteEffect = async (rowData) => {
+        const effect = getEffect(rowData._id);
+        const shouldDelete = await Dialog.confirm({
+            title: "Delete Confirmation",
+            content: `<p>Are you sure you would like to delete the "${effect.name}" Active Effect?</p>`,
+            defaultYes: false
+        });
+        if ( shouldDelete ) {
+            effect.delete();
+            updateEffects();
+        }
+    };
+
+    const effectsColumns = [
+        { 
+            data: 'img', 
+            title: game.i18n.localize("Image"),
+            render: '#image',
+            responsivePriority: 1,
+            orderable: false,
+        },
+        { 
+            data: 'name',
+            title: game.i18n.localize("Name"),
+            responsivePriority: 1,
+            width: '200px',
+            render: function (data, type, context) {
+                if (type === 'display') {
+                    return `<span data-tooltip="${context.description}">${data}</span>`;
+                }
+                return data;
+            }
+        },
+        {
+            data: 'origin',
+            title: game.i18n.localize("Source"),
+        },
+        { 
+            data: null,
+            title: game.i18n.localize("Actions"),
+            render: '#actions',
+            orderable: false,
+            width: '200px'
+        }
+    ];
+
+    const effectsOptions = {
+        paging: false,
+        stateSave: true,
+        responsive: true,
+        colReorder: false,
+        order: [[1, 'asc']],
+        createdRow: (row, data) => {
+            console.dir(data, data.uuid);
+            row.setAttribute("data-id", data._id);
+            row.setAttribute("data-uuid", data.uuid);
+            row.setAttribute("data-type", 'ActiveEffect');
+        },
+        layout: {
+            topStart: {
+                buttons: [
+                    {
+                        text: '<i class="fas fa-plus"></i> Add',
+                        action: (e, dt, node, config) => {
+                            ActiveEffect.createDocuments([{label: "New Effect"}], {parent: document}).then(effect => {
+                                effect[0].sheet.render(true);
+                            });
+                        }
+                    },
+                    'colvis'
+                ]
+            }
+        }
+    };
+    
+    // Combat
+    const currentCombatant = ref(game.combat?.combatant);
+    Hooks.on("combatTurnChange", () => {
+        currentCombatant.value = game.combat?.combatant;
+    });
+
+    // Paper Doll Slots
+
+    // Visibility states
+    const visibilityStates = {
+        'type': computed(() => {
+            return 'default';
+        })
+        ,
+        'class': computed(() => {
+            return 'default';
+        })
+        ,
+        'training': computed(() => {
+            return 'default';
+        })
+        ,
+        'level': computed(() => {
+            return 'default';
+        })
+        ,
+        'cost': computed(() => {
+            return 'default';
+        })
+        ,
+        'summary': computed(() => {
+            return 'default';
+        })
+        ,
+        'roll': computed(() => {
+            return 'default';
+        })
+    };
+
+
+    const isHidden = (type) => {
+        const visibility = visibilityStates[type].value;
+        if (visibility === "hidden") {
+            return true;
+        }
+        if (visibility === "gmOnly") {
+            return !game.user.isGM;
+        }
+        if (visibility === "secret") {
+            const isGm = game.user.isGM;
+            const isOwner = document.getUserLevel(game.user) === CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER;
+            return !isGm && !isOwner;
+        }
+        if (visibility === "edit") {
+            return !editModeRef.value;
+        }
+
+        // Default to visible
+        return false;
+    };
+
+    const isDisabled = (type) => {
+        const visibility = visibilityStates[type].value;
+        const disabledStates = ["readonly", "locked"];
+        if (disabledStates.includes(visibility)) {
+            return true;
+        }
+        if (visibility === "gmEdit") {
+            const isGm = game.user.isGM;
+            const isEditMode = editModeRef.value;
+            return !isGm && !isEditMode;
+        }
+
+        if (visibility === "unlocked") {
+            return false;
+        }
+        
+        // Default to enabled while in editMode
+        return !editModeRef.value;
+    };
+
+    const getLabel = (label, icon) => {
+        const localized = game.i18n.localize(label);
+        if (icon) {
+            return `<i class="${icon}"></i> ${localized}`;
+        }
+        return localized;
+    };
+    
+    // Attribute roll methods
+</script>
+<style>
+</style>
+<template>
+    <v-app>
+        <!-- App Bar -->
+        <v-app-bar :color="editMode ? 'amber-accent-3' : primaryColor" density="comfortable">
+            <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+            <v-app-bar-title v-if="!editMode">{{ context.document.name }}</v-app-bar-title>
+            <v-text-field name="name" v-model="context.document.name" variant="outlined" class="document-name" v-if="editMode" density="compact"></v-text-field>
+            <v-alert :text="game.i18n.localize('EditModeWarning')" type="warning" density="compact" class="ga-2 ma-1" color="amber-accent-3" v-if="editMode"></v-alert>
+            <template v-slot:append>
+                <v-btn
+                    :icon="hovered ? (editMode ? 'fa-solid fa-dice-d20' : 'fa-solid fa-pen-to-square') : (editMode ? 'fa-solid fa-pen-to-square' : 'fa-solid fa-dice-d20')"
+                    @click="toggleEditMode"
+                    @mouseover="hovered = true"
+                    @mouseleave="hovered = false"
+                    :data-tooltip="editMode ? 'Swap to Play mode' : 'Swap to Edit mode'"
+                ></v-btn>
+            </template>
+        </v-app-bar>
+
+        <!-- Navigation Drawer -->
+        <v-navigation-drawer v-model="drawer" temporary style="background-color: #dddddd">
+            <v-img :src="context.document.img" style="background-color: lightgray" data-edit='img' data-action='onEditImage'>
+                <template #error>
+                    <v-img src="/systems/kitchen-sink/img/missing-character.png" data-edit='img' data-action='onEditImage'></v-img>
+                </template>
+            </v-img>
+            <v-tabs v-model="page" direction="vertical">
+                <v-tab value="spell" prepend-icon="fa-solid fa-circle-user">Spell</v-tab>
+            </v-tabs>
+            <template v-slot:append>
+                <div class="pa-2">
+                    <v-btn block @click="setupColors" :color="secondaryColor" prepend-icon="fa-solid fa-palette">
+                    Setup Colors
+
+                    <v-dialog activator="parent" max-width="1000">
+                    <template v-slot:default="{ isActive }">
+                    <v-card
+                        title="Setup Colors"
+                    >
+                        <v-card-text>
+                            <div class="d-flex flex-row">
+                                <div class="d-flex flex-column">
+                                    <v-label>Primary Color</v-label>
+                                    <v-color-picker hide-inputs hide-sliders hide-canvas show-swatches v-model="primaryColor" swatches-max-height="500px"></v-color-picker>
+                                </div>
+                                <v-spacer></v-spacer>
+                                <div class="d-flex flex-column">
+                                    <v-label>Secondary Color</v-label>
+                                    <v-color-picker hide-inputs hide-sliders hide-canvas show-swatches v-model="secondaryColor" swatches-max-height="500px"></v-color-picker>
+                                </div>
+                                <v-spacer></v-spacer>
+                                <div class="d-flex flex-column">
+                                    <v-label>Tertiary Color</v-label>
+                                    <v-color-picker hide-inputs hide-sliders hide-canvas show-swatches v-model="tertiaryColor" swatches-max-height="500px"></v-color-picker>
+                                </div>
+                            </div>
+                            <h3>Preview</h3>
+                            <div class="d-flex flex-row"style="overflow-x: scroll; padding-left: 0.5rem; padding-right: 0.5rem;">
+                                <div
+                                    v-for="i in 10"
+                                    :key="i"
+                                    :style="{
+                                        flex: 1,
+                                        minWidth: '5px',
+                                        flexShrink: 0,
+                                        height: '30px',
+                                        backgroundColor: i <= 4 ? primaryColor : (i <= 6 ? tertiaryColor : 'transparent'),
+                                        border: i <= value ? 'none' : '2px solid ' + secondaryColor,
+                                        transform: 'skewX(-20deg)',
+                                        borderRadius: '2px'
+                                    }"
+                                />
+                            </div>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-btn
+                                variant="tonal"
+                                prepend-icon="fa-solid fa-sync"
+                                text="Reset"
+                                :color="secondaryColor"
+                                @click="resetColors"
+                            ></v-btn>
+                        </v-card-actions>
+                    </v-card>
+                    </template>
+                </v-dialog>
+                    </v-btn>
+                </div>
+            </template>
+        </v-navigation-drawer>
+
+        <!-- Main Content -->
+        <v-main class="d-flex">
+            <v-container :key="editMode" :class="pageBackground" fluid>
+                <v-tabs-window v-model="page">
+                    <v-tabs-window-item value="spell" data-tab="spell">
+                        <v-row dense>
+                            <i-extended-choice
+                                label="Spell.Type.label"
+                                icon=""
+                                systemPath="system.type.value"
+                                :context="context"
+                                :items="[{ label: game.i18n.localize('Spell.Type.Attack'), value: 'Attack', icon: 'fa-solid fa-bolt', color: '#FF0000' },
+                                { label: game.i18n.localize('Spell.Type.Defense'), value: 'Defense', icon: 'fa-solid fa-shield', color: '#00FF00' },
+                                { label: game.i18n.localize('Spell.Type.Healing'), value: 'Healing', icon: 'fa-solid fa-heart', color: '#0000FF' }
+                                ]"
+                                :primaryColor="primaryColor"
+                                :secondaryColor="secondaryColor"
+                                :disabled="isDisabled('type')" v-if="!isHidden('type')"
+                            ></i-extended-choice>
+                            <i-extended-choice
+                                label="Spell.Class.label"
+                                icon=""
+                                systemPath="system.class.value"
+                                :context="context"
+                                :items="[{ label: game.i18n.localize('Spell.Class.None'), value: 'None', icon: '', color: '' },
+                                { label: game.i18n.localize('Spell.Class.Fire'), value: 'Fire', icon: 'fa-solid fa-fire', color: '#FF4500' },
+                                { label: game.i18n.localize('Spell.Class.Water'), value: 'Water', icon: 'fa-solid fa-water', color: '#1E90FF' },
+                                { label: game.i18n.localize('Spell.Class.Earth'), value: 'Earth', icon: 'fa-solid fa-earth', color: '#8B4513' },
+                                { label: game.i18n.localize('Spell.Class.Air'), value: 'Air', icon: 'fa-solid fa-wind', color: '#87CEEB' }
+                                ]"
+                                :primaryColor="primaryColor"
+                                :secondaryColor="secondaryColor"
+                                :disabled="isDisabled('class')" v-if="!isHidden('class')"
+                            ></i-extended-choice>
+                            <i-extended-choice
+                                label="Spell.Training.label"
+                                icon=""
+                                systemPath="system.training.value"
+                                :context="context"
+                                :items="[{ label: game.i18n.localize('Spell.Training.Basic'), value: 'Basic', icon: 'fa-solid fa-graduation-cap', color: '#FFD700', customKeys: [{ key: 'bonus', label: 'Bonus', value: 0 },{ key: 'checkDC', label: 'Checkdc', value: 16 }] },
+                                { label: game.i18n.localize('Spell.Training.Advanced'), value: 'Advanced', icon: 'fa-solid fa-university', color: '#C0C0C0', customKeys: [{ key: 'bonus', label: 'Bonus', value: 1 },{ key: 'checkDC', label: 'Checkdc', value: 14 }] },
+                                { label: game.i18n.localize('Spell.Training.Master'), value: 'Master', icon: 'fa-solid fa-chess-king', color: '#8B4513', customKeys: [{ key: 'bonus', label: 'Bonus', value: 2 },{ key: 'checkDC', label: 'Checkdc', value: 12 }] }
+                                ]"
+                                :primaryColor="primaryColor"
+                                :secondaryColor="secondaryColor"
+                                :disabled="isDisabled('training')" v-if="!isHidden('training')"
+                            ></i-extended-choice>
+                            <v-number-input
+                                controlVariant="stacked"
+                                density="compact"
+                                variant="outlined"
+                                v-model="context.system.level"
+                                name="system.level"
+                                :disabled="isDisabled('level')" v-if="!isHidden('level')"
+                            >
+                            
+                <template #label>
+                    <span v-html="getLabel('Spell.Level', undefined)" />
+                </template>
+                            
+                <template #append-inner>
+                    <i-calculator v-if="editMode" :context="context" :systemPath="'system.level'" :primaryColor="primaryColor" :secondaryColor="secondaryColor"></i-calculator>
+                </template>
+                
+                            </v-number-input>
+                            <v-number-input
+                                controlVariant="stacked"
+                                density="compact"
+                                variant="outlined"
+                                v-model="context.system.cost"
+                                name="system.cost"
+                                :disabled="isDisabled('cost')" v-if="!isHidden('cost')"
+                            >
+                            
+                <template #label>
+                    <span v-html="getLabel('Spell.Cost', undefined)" />
+                </template>
+                            
+                <template #append-inner>
+                    <i-calculator v-if="editMode" :context="context" :systemPath="'system.cost'" :primaryColor="primaryColor" :secondaryColor="secondaryColor"></i-calculator>
+                </template>
+                
+                            </v-number-input>
+                            <i-text-field 
+                                label="Spell.Summary"
+                                icon=""
+                                systemPath="system.summary"
+                                :disabled="isDisabled('summary')" v-if="!isHidden('summary')"
+                                :context="context"
+                                :editMode="editMode" 
+                                :primaryColor="primaryColor" 
+                                :secondaryColor="secondaryColor">
+                            </i-text-field>
+                            <spellRollAction 
+                                :context="context" 
+                                :color="primaryColor"
+                                :editMode="editMode" 
+                                :visibility="visibilityStates['roll'].value">
+                            </spellRollAction>
+                        </v-row>
+                        <v-divider class="mt-4 mb-2"></v-divider>
+                        <v-tabs v-model="tab" grow always-center>
+                                <v-tab value="description" prepend-icon="fa-solid fa-book">Description</v-tab>
+                                <v-tab value="effects" prepend-icon="fa-solid fa-sparkles" @mousedown="spawnDatatableWindow($event, 'Spell', 'effects')">Effects</v-tab>
+                        </v-tabs>
+                        <v-tabs-window v-model="tab" class="tabs-window">
+                            <v-tabs-window-item value="description" data-tab="description" class="tabs-container">
+                                <i-prosemirror :field="context.editors['system.description']" :disabled="!editMode"></i-prosemirror>
+                            </v-tabs-window-item>
+                            <v-tabs-window-item value="effects" data-tab="effects" class="tabs-container">
+                                <DataTable class="display compact" :data="effects" :columns="effectsColumns" :options="effectsOptions">
+                                    <template #image="props">
+                                        <img :src="props.cellData" width=40 height=40></img>
+                                    </template>
+                                    <template #actions="props">
+                                        <div class="flexrow">
+                                            <a 
+                                                class="row-action" 
+                                                data-action="toggle" 
+                                                @click="toggleEffect(props.rowData)" 
+                                                :data-tooltip="game.i18n.localize(props.rowData.disabled ? 'Enable' : 'Disable')">
+                                                <i :class="props.rowData.disabled ? 'fas fa-toggle-off' : 'fas fa-toggle-on'"></i>
+                                            </a>
+                                            <a class="row-action" data-action="edit" @click="editEffect(props.rowData)" :data-tooltip="game.i18n.localize('Edit')"><i class="fas fa-edit"></i></a>
+                                            <a class="row-action" data-action="sendToChat" @click="sendEffectToChat(props.rowData)" :data-tooltip="game.i18n.localize('SendToChat')"><i class="fas fa-message"></i></a>
+                                            <a class="row-action" data-action="delete" @click="deleteEffect(props.rowData)" :data-tooltip="game.i18n.localize('Delete')"><i class="fas fa-delete-left"></i></a>
+                                        </div>
+                                    </template>
+                                </DataTable>
+                            </v-tabs-window-item>
+                        </v-tabs-window>
+                    </v-tabs-window-item>
+                </v-tabs-window>
+            </v-container>
+        </v-main>
+    </v-app>
+</template>

@@ -1,0 +1,69 @@
+{
+    "id": "kitchen-sink",
+    "title": "Kitchen Sink",
+    "description": "An dump of all the features",
+    "version": "This is auto replaced",
+    "compatibility": {
+        "minimum": 12,
+        "verified": 12
+    },
+    "authors": [
+        {
+            "name": "Cody Swendrowski"
+        }
+    ],
+    "scripts": [
+        "scripts/datatables.min.js",
+        "scripts/progressbar.min.js"
+    ],
+    "esmodules": [
+        "system/kitchen-sink-main.mjs",
+        "system/kitchen-sink-custom.mjs"
+    ],
+    "styles": [
+        "css/datatables.min.css",
+        "css/vuetify.min.css",
+        "css/materialdesignicons.min.css",
+        "css/kitchen-sink.css",
+        "css/kitchen-sink-custom.css"
+    ],
+    "license": "LICENSE",
+    "readme": "README.md",
+    "socket": true,
+    "languages": [
+      {
+        "lang": "en",
+        "name": "English",
+        "path": "lang/en.json"
+      }
+    ],
+    "flags": {
+        "hotReload": {
+            "extensions": ["css", "hbs", "json", "mjs"],
+            "paths": ["css", "system", "lang", "system", "system.json"]
+        },
+        "isdl-version": "0.1.101"
+    },
+    "media": [
+        {
+            "type": "setup",
+            "url": "systems/kitchen-sink/img/isdl.png",
+            "thumbnail": "systems/kitchen-sink/img/isdl.png"
+        }
+    ],
+    "relationships": {
+        "recommends": [
+            {
+                "id": "intelligent-filepicker",
+                "reason": "Makes it much faster to pick out Icons for your Documents"
+            },
+            {
+                "id": "ric",
+                "reason": "Adds an UI for managing invalid Documents, such as when fields change to become required but were not filled in"
+            }
+        ]
+    },
+    "url": "This is auto replaced",
+    "manifest": "This is auto replaced",
+    "download": "This is auto replaced"
+}

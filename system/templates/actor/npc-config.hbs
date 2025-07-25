@@ -1,0 +1,161 @@
+<form class="{{cssClass}} flexcol" autocomplete="off">
+
+    {{!-- Sheet Header --}}
+    <header class="sheet-header flexrow">
+        <img class="profile" src="{{document.img}}" title="{{document.name}}" data-edit="img"/>
+        <h1 class="title">
+            <input name="name" type="text" value="{{document.name}}" placeholder="NPC Name"/>
+        </h1>
+    </header>
+
+    <div class="notification warning">{{localize 'EditModeWarning'}}</div>
+
+    {{!-- Body --}}
+    <section class="sheet-body flexcol">
+
+        <section class="pages-container">
+            <div class="tab flexcol active" data-group="primary" data-tab="main">
+                {{!-- Main Configuration --}}
+                <div class="grid-container">
+                    {{!-- Number Level --}}
+                    <div class="form-group property numberExp calc" data-name="system.level">
+                        <label><i class="fa-solid fa-chart-line" style="color: #FF7F50;"></i> {{ localize "NPC.Level" }}</label>
+                        {{numberInput document.system.level name="system.level" disabled=false step=1}}
+                        <a class="calculator-toggle action" data-action="toggle-calculator">
+                            <i class="fa-solid fa-calculator"></i>
+                        </a>
+                        <div class="calculator">
+                            <input type="number" class="calc-input" placeholder="Enter number">
+                            <div class="calc-buttons">
+                                <button data-action="calc-mode" data-mode="add" class="mode-button active action" data-tooltip="Add">➕</button>
+                                <button data-action="calc-mode" data-mode="subtract" class="mode-button action" data-tooltip="Subtract">➖</button>
+                                <button data-action="calc-mode" data-mode="multiply" class="mode-button action" data-tooltip="Multiply">✖️</button>
+                                <button data-action="calc-mode" data-mode="divide" class="mode-button action" data-tooltip="Divide">➗</button>
+                            </div>
+                            <div class="calc-buttons">
+                                <button data-action="calc-submit" class="action" data-tooltip="Submit">✅</button>
+                                <button class="close-btn action" data-action="toggle-calculator" data-tooltip="Cancel">❌</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{!-- Attribute Monster --}}
+                    <div class="form-group attributeExp no-mod" data-name="system.monster">
+                        <label>{{ localize "NPC.Monster" }}</label>
+                        {{numberInput document.system.monster.value name="system.monster.value" step=1 min=0 disabled=false}}
+                    </div>
+
+                    {{!-- Number Defense --}}
+                    <div class="form-group property numberExp " data-name="system.defense">
+                        <label>{{ localize "NPC.Defense" }}</label>
+                        {{numberInput document.system.defense name="system.defense" disabled=true step=1}}
+                        
+                    </div>
+
+                    {{!-- Single Document Armor --}}
+                    <div class="form-group property single-document" data-name="system.armor" data-type="equipment">
+                        <label>{{ localize "NPC.Armor" }}</label>
+                        {{#if armorHasContentLink}}
+                        <div class="single-document-content">
+                            {{{armorContentLink}}}
+                            <a class="single-document-remove" data-name="system.armor" data-action="remove" style="flex: 0;margin-left: 0.25rem;"><i class="fa-solid fa-delete-left"></i></a>
+                        </div>
+                        {{else}}
+                        <p class="single-document-none">{{ localize "NoSingleDocument" }}</p>
+                        {{/if}}
+                    </div>
+
+                </div>
+
+                {{!-- Tab Navigation --}}
+                <nav class="sheet-navigation tabs" data-group="secondary">
+                    <a class="item" data-tab="description"><i class="fa-solid fa-book"></i> {{ localize "Description" }}</a>
+                    <a class="item" data-tab="equipment"><i class="fa-solid fa-table"></i> {{ localize "NPC.Equipment" }}</a>
+                    <a class="item" data-tab="effects"><i class="fa-solid fa-sparkles"></i> {{ localize "Effects" }}</a>
+                </nav>
+
+                <section class="tabs-container">
+                    {{!-- Description Tab --}}
+                    <div class="tab description flexrow" data-group="secondary" data-tab="description">
+                        <fieldset>
+                            {{!-- Description --}}
+                            <div class="form-group stacked" data-name="system.description">
+                                <label>{{ localize "Description" }}</label>
+                                {{editor descriptionHTML target="system.description" button=false editable=editable engine="prosemirror" collaborate=false}}
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    {{!-- Equipment Document Array --}}
+                    <div class="tab" data-group="secondary" data-tab="equipment" data-type="equipment" >
+                        {{!-- Equipment Table --}}
+                        <table class="display compact" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Image" }}</th>
+                                    <th data-class-name="priority">{{ localize "Name" }}</th>
+                                    <th>{{ localize "Equipment.Type.label" }}</th>
+                                    <th>{{ localize "Equipment.Bonus" }}</th>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Actions" }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each document.system.equipment as |item|}}
+                                    <tr data-id="{{item._id}}" data-uuid="{{item.uuid}}" data-type="{{item.type}}">
+                                        <td><img src="{{item.img}}" title="{{item.name}}" width=40 height=40 /></td>
+                                        <td data-tooltip='{{item.system.description}}'>{{item.name}}</td>
+                                        <td>{{item.system.type}}</td>
+                                        <td>{{item.system.bonus}}</td>
+                                        <td>
+                                            <div class="flexrow">
+                                                {{#each ../EquipmentItemActions}}
+                                                    <a class="row-action item-custom-action" data-action="{{this.action}}" data-type="Equipment" data-item="{{item._id}}" data-tooltip="{{localize this.label}}"><i class="{{this.icon}}"></i></a>
+                                                {{/each}}
+                                                <a class="row-action" data-action="edit" data-item="{{item._id}}" data-tooltip="{{localize 'Edit'}}"><i class="fas fa-edit"></i></a>
+                                                <a class="row-action" data-action="sendToChat" data-item="{{item._id}}" data-tooltip="{{localize 'SendToChat'}}"><i class="fas fa-message"></i></a>
+                                                <a class="row-action" data-action="delete" data-item="{{item._id}}" data-tooltip="{{ localize 'Delete' }}"><i class="fas fa-delete-left"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+
+                
+                    {{!-- Effects Tab --}}
+                    <div class="tab effects" data-group="secondary" data-tab="effects" data-type="ActiveEffect">
+                        {{!-- Effects Table --}}
+                        <table class="display" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Image" }}</th>
+                                    <th data-class-name="priority">{{ localize "Name" }}</th>
+                                    <th>{{ localize "Source" }}</th>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Actions" }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each applicableEffects as |effect|}}
+                                    <tr data-id="{{effect._id}}" data-uuid="{{effect.uuid}}" data-type="ActiveEffect">
+                                        <td><img src="{{effect.img}}" title="{{effect.name}}" width=40 height=40 /></td>
+                                        <td data-tooltip='{{effect.description}}'>{{effect.name}}</td>
+                                        <td>{{effect.source}}</td>
+                                        <td>
+                                            <div class="flexrow">
+                                                <a class="row-action" data-action="edit" data-item="{{effect._id}}" data-tooltip="{{localize 'Edit'}}"><i class="fas fa-edit"></i></a>
+                                                <a class="row-action" data-action="sendToChat" data-item="{{effect._id}}" data-tooltip="{{localize 'SendToChat'}}"><i class="fas fa-message"></i></a>
+                                                <a class="row-action" data-action="delete" data-item="{{effect._id}}" data-tooltip="{{ localize 'Delete' }}"><i class="fas fa-delete-left"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+        </section>
+    </section>
+</form>

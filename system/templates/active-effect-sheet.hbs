@@ -1,0 +1,669 @@
+<form  class="{{cssClass}}" autocomplete="off">
+    <!-- Effect Header -->
+    <header class="sheet-header">
+        <img class="effect-icon effect-img" src="{{ effect.img }}" data-edit="img">
+        <h1 class="effect-title"><input type="text" name="name" value="{{effect.name}}" placeholder="{{localize 'ARCHMAGE.name'}}"/></h1>
+    </header>
+
+    <article class="sheet-content">
+        <section class="sheet-body">
+            <!-- Effect Configuration Tabs -->
+            <nav class="sheet-tabs tabs">
+                <a class="item" data-tab="info"><i class="fas fa-book"></i> {{localize "Info"}}</a>
+                <a class="item" data-tab="hero">{{localize "Hero"}}</a>
+                <a class="item" data-tab="npc">{{localize "NPC"}}</a>
+            </nav>
+
+            <div class="sheet-tabs-content">
+                <!-- Info Tab -->
+                <section class="tab" data-tab="info">
+                    <div class="form-group stacked">
+                        <label>{{ localize "EFFECT.Description" }}</label>
+                        {{editor descriptionHTML target="description" button=false editable=editable engine="prosemirror" collaborate=false}}
+                    </div>
+
+                    <div class="form-group">
+                        <label>{{ localize "EFFECT.Disabled" }}</label>
+                        <input type="checkbox" name="disabled" {{ checked effect.disabled }}/>
+                    </div>
+
+                    {{#if originLink}}
+                    <div class="form-group">
+                        <label>{{ localize "EFFECT.Origin" }}</label>
+                        {{{originLink}}}
+                    </div>
+                    {{/if}}
+
+                    {{#if isItemEffect}}
+                    <div class="form-group">
+                        <label>{{ labels.transfer.name }}</label>
+                        <div class="form-fields">
+                            <input type="checkbox" name="transfer" {{checked data.transfer}}/>
+                        </div>
+                        <p class="hint">{{ labels.transfer.hint }}</p>
+                    </div>
+                    {{/if}}
+                </div>
+
+                <!-- Hero Tab -->
+                <section class="tab" data-tab="hero">
+                    <!-- Basic Section -->
+                    <fieldset>
+                      <legend>{{localize "Basic"}}</legend>
+                      <div class="form-group">
+                          <label>{{localize "StringField"}}</label>
+                          <select name="hero.system.stringfield-mode" data-dtype="String">
+                              {{selectOptions stringModes selected=hero.system.stringfield-mode}}
+                          </select>
+                          <input type="text" name="hero.system.stringfield" value="{{hero.system.stringfield}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "NumberField"}}</label>
+                          <select name="hero.system.numberfield-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.numberfield-mode}}
+                          </select>
+                          <input type="number" name="hero.system.numberfield" value="{{hero.system.numberfield}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "BooleanField"}}</label>
+                          <select name="hero.system.booleanfield-mode" data-dtype="Boolean">
+                              {{selectOptions booleanModes selected=hero.system.booleanfield-mode}}  
+                          </select>
+                          <input type="checkbox" name="hero.system.booleanfield" {{checked hero.system.booleanfield}} />
+                      </div>
+                    </fieldset>
+                    <!-- Complex Section -->
+                    <fieldset>
+                      <legend>{{localize "Complex"}}</legend>
+                      <div class="form-group">
+                          <label>{{localize "ResourceField"}} Current</label>
+                          <select name="hero.system.resourcefield.value-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.resourcefield.value-mode}}
+                          </select>
+                          <input type="number" name="hero.system.resourcefield.value" value="{{hero.system.resourcefield.value}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "ResourceField"}} Max</label>
+                          <select name="hero.system.resourcefield.max-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.resourcefield.max-mode}}
+                          </select>
+                          <input type="number" name="hero.system.resourcefield.max" value="{{hero.system.resourcefield.max}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "TrackerField"}} Min</label>
+                          <select name="hero.system.trackerfield.min-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.trackerfield.min-mode}}
+                          </select>
+                          <input type="number" name="hero.system.trackerfield.min" value="{{hero.system.trackerfield.min}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "TrackerField"}} Current</label>
+                          <select name="hero.system.trackerfield.value-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.trackerfield.value-mode}}
+                          </select>
+                          <input type="number" name="hero.system.trackerfield.value" value="{{hero.system.trackerfield.value}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "TrackerField"}} Temp</label>
+                          <select name="hero.system.trackerfield.temp-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.trackerfield.temp-mode}}
+                          </select>
+                          <input type="number" name="hero.system.trackerfield.temp" value="{{hero.system.trackerfield.temp}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "TrackerField"}} Max</label>
+                          <select name="hero.system.trackerfield.max-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.trackerfield.max-mode}}
+                          </select>
+                          <input type="number" name="hero.system.trackerfield.max" value="{{hero.system.trackerfield.max}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "AttributeField"}} Value</label>
+                          <select name="hero.system.attributefield.mod-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.attributefield.value-mode}}
+                          </select>
+                          <input type="number" name="hero.system.attributefield.value" value="{{hero.system.attributefield.value}}" />
+                      </div>
+                    </fieldset>
+                    <!-- BasicInfo Section -->
+                    <fieldset>
+                      <legend>{{localize "BasicInfo"}}</legend>
+                      <div class="form-group">
+                          <label>{{localize "Summary"}}</label>
+                          <select name="hero.system.summary-mode" data-dtype="String">
+                              {{selectOptions stringModes selected=hero.system.summary-mode}}
+                          </select>
+                          <input type="text" name="hero.system.summary" value="{{hero.system.summary}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Text2"}}</label>
+                          <select name="hero.system.text2-mode" data-dtype="String">
+                              {{selectOptions stringModes selected=hero.system.text2-mode}}
+                          </select>
+                          <input type="text" name="hero.system.text2" value="{{hero.system.text2}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "BackgroundText"}}</label>
+                          <select name="hero.system.backgroundtext-mode" data-dtype="String">
+                              {{selectOptions stringModes selected=hero.system.backgroundtext-mode}}
+                          </select>
+                          <input type="text" name="hero.system.backgroundtext" value="{{hero.system.backgroundtext}}" />
+                      </div>
+                    </fieldset>
+                    <!-- Level Section -->
+                    <fieldset>
+                      <legend>{{localize "Level"}}</legend>
+                      <div class="form-group">
+                          <label>{{localize "Fate"}} Min</label>
+                          <select name="hero.system.fate.min-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.fate.min-mode}}
+                          </select>
+                          <input type="number" name="hero.system.fate.min" value="{{hero.system.fate.min}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Fate"}} Current</label>
+                          <select name="hero.system.fate.value-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.fate.value-mode}}
+                          </select>
+                          <input type="number" name="hero.system.fate.value" value="{{hero.system.fate.value}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Fate"}} Temp</label>
+                          <select name="hero.system.fate.temp-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.fate.temp-mode}}
+                          </select>
+                          <input type="number" name="hero.system.fate.temp" value="{{hero.system.fate.temp}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Fate"}} Max</label>
+                          <select name="hero.system.fate.max-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.fate.max-mode}}
+                          </select>
+                          <input type="number" name="hero.system.fate.max" value="{{hero.system.fate.max}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Shield"}} Min</label>
+                          <select name="hero.system.shield.min-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.shield.min-mode}}
+                          </select>
+                          <input type="number" name="hero.system.shield.min" value="{{hero.system.shield.min}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Shield"}} Current</label>
+                          <select name="hero.system.shield.value-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.shield.value-mode}}
+                          </select>
+                          <input type="number" name="hero.system.shield.value" value="{{hero.system.shield.value}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Shield"}} Temp</label>
+                          <select name="hero.system.shield.temp-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.shield.temp-mode}}
+                          </select>
+                          <input type="number" name="hero.system.shield.temp" value="{{hero.system.shield.temp}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Shield"}} Max</label>
+                          <select name="hero.system.shield.max-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.shield.max-mode}}
+                          </select>
+                          <input type="number" name="hero.system.shield.max" value="{{hero.system.shield.max}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Wounds"}} Min</label>
+                          <select name="hero.system.wounds.min-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.wounds.min-mode}}
+                          </select>
+                          <input type="number" name="hero.system.wounds.min" value="{{hero.system.wounds.min}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Wounds"}} Current</label>
+                          <select name="hero.system.wounds.value-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.wounds.value-mode}}
+                          </select>
+                          <input type="number" name="hero.system.wounds.value" value="{{hero.system.wounds.value}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Wounds"}} Temp</label>
+                          <select name="hero.system.wounds.temp-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.wounds.temp-mode}}
+                          </select>
+                          <input type="number" name="hero.system.wounds.temp" value="{{hero.system.wounds.temp}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Wounds"}} Max</label>
+                          <select name="hero.system.wounds.max-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.wounds.max-mode}}
+                          </select>
+                          <input type="number" name="hero.system.wounds.max" value="{{hero.system.wounds.max}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Heat"}} Min</label>
+                          <select name="hero.system.heat.min-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.heat.min-mode}}
+                          </select>
+                          <input type="number" name="hero.system.heat.min" value="{{hero.system.heat.min}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Heat"}} Current</label>
+                          <select name="hero.system.heat.value-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.heat.value-mode}}
+                          </select>
+                          <input type="number" name="hero.system.heat.value" value="{{hero.system.heat.value}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Heat"}} Temp</label>
+                          <select name="hero.system.heat.temp-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.heat.temp-mode}}
+                          </select>
+                          <input type="number" name="hero.system.heat.temp" value="{{hero.system.heat.temp}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Heat"}} Max</label>
+                          <select name="hero.system.heat.max-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.heat.max-mode}}
+                          </select>
+                          <input type="number" name="hero.system.heat.max" value="{{hero.system.heat.max}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Time"}} Min</label>
+                          <select name="hero.system.time.min-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.time.min-mode}}
+                          </select>
+                          <input type="number" name="hero.system.time.min" value="{{hero.system.time.min}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Time"}} Current</label>
+                          <select name="hero.system.time.value-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.time.value-mode}}
+                          </select>
+                          <input type="number" name="hero.system.time.value" value="{{hero.system.time.value}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Time"}} Temp</label>
+                          <select name="hero.system.time.temp-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.time.temp-mode}}
+                          </select>
+                          <input type="number" name="hero.system.time.temp" value="{{hero.system.time.temp}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Time"}} Max</label>
+                          <select name="hero.system.time.max-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.time.max-mode}}
+                          </select>
+                          <input type="number" name="hero.system.time.max" value="{{hero.system.time.max}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "TimePassed"}}</label>
+                          <select name="hero.system.timepassed-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.timepassed-mode}}
+                          </select>
+                          <input type="number" name="hero.system.timepassed" value="{{hero.system.timepassed}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "OutOfTime"}}</label>
+                          <select name="hero.system.outoftime-mode" data-dtype="Boolean">
+                              {{selectOptions booleanModes selected=hero.system.outoftime-mode}}  
+                          </select>
+                          <input type="checkbox" name="hero.system.outoftime" {{checked hero.system.outoftime}} />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Level"}}</label>
+                          <select name="hero.system.level-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.level-mode}}
+                          </select>
+                          <input type="number" name="hero.system.level" value="{{hero.system.level}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Plain"}} Min</label>
+                          <select name="hero.system.plain.min-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.plain.min-mode}}
+                          </select>
+                          <input type="number" name="hero.system.plain.min" value="{{hero.system.plain.min}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Plain"}} Current</label>
+                          <select name="hero.system.plain.value-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.plain.value-mode}}
+                          </select>
+                          <input type="number" name="hero.system.plain.value" value="{{hero.system.plain.value}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Plain"}} Temp</label>
+                          <select name="hero.system.plain.temp-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.plain.temp-mode}}
+                          </select>
+                          <input type="number" name="hero.system.plain.temp" value="{{hero.system.plain.temp}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Plain"}} Max</label>
+                          <select name="hero.system.plain.max-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.plain.max-mode}}
+                          </select>
+                          <input type="number" name="hero.system.plain.max" value="{{hero.system.plain.max}}" />
+                      </div>
+                    </fieldset>
+                    <div class="form-group">
+                        <label>{{localize "Experience"}} Min</label>
+                        <select name="hero.system.experience.min-mode" data-dtype="Number">
+                            {{selectOptions numberModes selected=hero.system.experience.min-mode}}
+                        </select>
+                        <input type="number" name="hero.system.experience.min" value="{{hero.system.experience.min}}" />
+                    </div>
+                    <div class="form-group">
+                        <label>{{localize "Experience"}} Current</label>
+                        <select name="hero.system.experience.value-mode" data-dtype="Number">
+                            {{selectOptions resourceModes selected=hero.system.experience.value-mode}}
+                        </select>
+                        <input type="number" name="hero.system.experience.value" value="{{hero.system.experience.value}}" />
+                    </div>
+                    <div class="form-group">
+                        <label>{{localize "Experience"}} Temp</label>
+                        <select name="hero.system.experience.temp-mode" data-dtype="Number">
+                            {{selectOptions resourceModes selected=hero.system.experience.temp-mode}}
+                        </select>
+                        <input type="number" name="hero.system.experience.temp" value="{{hero.system.experience.temp}}" />
+                    </div>
+                    <div class="form-group">
+                        <label>{{localize "Experience"}} Max</label>
+                        <select name="hero.system.experience.max-mode" data-dtype="Number">
+                            {{selectOptions numberModes selected=hero.system.experience.max-mode}}
+                        </select>
+                        <input type="number" name="hero.system.experience.max" value="{{hero.system.experience.max}}" />
+                    </div>
+                    <!-- Attributes Section -->
+                    <fieldset>
+                      <legend>{{localize "Attributes"}}</legend>
+                      <div class="form-group">
+                          <label>{{localize "Fight"}} Value</label>
+                          <select name="hero.system.fight.mod-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.fight.value-mode}}
+                          </select>
+                          <input type="number" name="hero.system.fight.value" value="{{hero.system.fight.value}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Flight"}} Value</label>
+                          <select name="hero.system.flight.mod-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.flight.value-mode}}
+                          </select>
+                          <input type="number" name="hero.system.flight.value" value="{{hero.system.flight.value}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Endure"}} Value</label>
+                          <select name="hero.system.endure.mod-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.endure.value-mode}}
+                          </select>
+                          <input type="number" name="hero.system.endure.value" value="{{hero.system.endure.value}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Persuade"}} Value</label>
+                          <select name="hero.system.persuade.mod-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.persuade.value-mode}}
+                          </select>
+                          <input type="number" name="hero.system.persuade.value" value="{{hero.system.persuade.value}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Grit"}} Value</label>
+                          <select name="hero.system.grit.mod-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.grit.value-mode}}
+                          </select>
+                          <input type="number" name="hero.system.grit.value" value="{{hero.system.grit.value}}" />
+                      </div>
+                    </fieldset>
+                    <!-- StatusEffects Section -->
+                    <fieldset>
+                      <legend>{{localize "StatusEffects"}}</legend>
+                      <div class="form-group">
+                          <label>{{localize "Slowed"}}</label>
+                          <select name="hero.system.slowed-mode" data-dtype="Boolean">
+                              {{selectOptions booleanModes selected=hero.system.slowed-mode}}  
+                          </select>
+                          <input type="checkbox" name="hero.system.slowed" {{checked hero.system.slowed}} />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Dazed"}}</label>
+                          <select name="hero.system.dazed-mode" data-dtype="Boolean">
+                              {{selectOptions booleanModes selected=hero.system.dazed-mode}}  
+                          </select>
+                          <input type="checkbox" name="hero.system.dazed" {{checked hero.system.dazed}} />
+                      </div>
+                    </fieldset>
+                    <!-- Counter Section -->
+                    <fieldset>
+                      <legend>{{localize "Counter"}}</legend>
+                      <div class="form-group">
+                          <label>{{localize "Count"}}</label>
+                          <select name="hero.system.count-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.count-mode}}
+                          </select>
+                          <input type="number" name="hero.system.count" value="{{hero.system.count}}" />
+                      </div>
+                    </fieldset>
+                    <!-- FancyCounter Section -->
+                    <fieldset>
+                      <legend>{{localize "FancyCounter"}}</legend>
+                      <div class="form-group">
+                          <label>{{localize "Count2"}}</label>
+                          <select name="hero.system.count2-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.count2-mode}}
+                          </select>
+                          <input type="number" name="hero.system.count2" value="{{hero.system.count2}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "FancyCounterAmount"}}</label>
+                          <select name="hero.system.fancycounteramount-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.fancycounteramount-mode}}
+                          </select>
+                          <input type="number" name="hero.system.fancycounteramount" value="{{hero.system.fancycounteramount}}" />
+                      </div>
+                    </fieldset>
+                    <!-- Test Section -->
+                    <fieldset>
+                      <legend>{{localize "Test"}}</legend>
+                      <div class="form-group">
+                          <label>{{localize "SomeThing"}}</label>
+                          <select name="hero.system.something-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.something-mode}}
+                          </select>
+                          <input type="number" name="hero.system.something" value="{{hero.system.something}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "AnotherThing"}}</label>
+                          <select name="hero.system.anotherthing-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.anotherthing-mode}}
+                          </select>
+                          <input type="number" name="hero.system.anotherthing" value="{{hero.system.anotherthing}}" />
+                      </div>
+                    </fieldset>
+                    <!-- Health Section -->
+                    <fieldset>
+                      <legend>{{localize "Health"}}</legend>
+                      <div class="form-group">
+                          <label>{{localize "HP"}} Current</label>
+                          <select name="hero.system.hp.value-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.hp.value-mode}}
+                          </select>
+                          <input type="number" name="hero.system.hp.value" value="{{hero.system.hp.value}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "HP"}} Max</label>
+                          <select name="hero.system.hp.max-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.hp.max-mode}}
+                          </select>
+                          <input type="number" name="hero.system.hp.max" value="{{hero.system.hp.max}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Stealth"}}</label>
+                          <select name="hero.system.stealth-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.stealth-mode}}
+                          </select>
+                          <input type="number" name="hero.system.stealth" value="{{hero.system.stealth}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Stagger"}} Current</label>
+                          <select name="hero.system.stagger.value-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.stagger.value-mode}}
+                          </select>
+                          <input type="number" name="hero.system.stagger.value" value="{{hero.system.stagger.value}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Stagger"}} Max</label>
+                          <select name="hero.system.stagger.max-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.stagger.max-mode}}
+                          </select>
+                          <input type="number" name="hero.system.stagger.max" value="{{hero.system.stagger.max}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Mana"}} Current</label>
+                          <select name="hero.system.mana.value-mode" data-dtype="Number">
+                              {{selectOptions resourceModes selected=hero.system.mana.value-mode}}
+                          </select>
+                          <input type="number" name="hero.system.mana.value" value="{{hero.system.mana.value}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Mana"}} Max</label>
+                          <select name="hero.system.mana.max-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.mana.max-mode}}
+                          </select>
+                          <input type="number" name="hero.system.mana.max" value="{{hero.system.mana.max}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Crisis"}}</label>
+                          <select name="hero.system.crisis-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.crisis-mode}}
+                          </select>
+                          <input type="number" name="hero.system.crisis" value="{{hero.system.crisis}}" />
+                      </div>
+                      <div class="form-group">
+                          <label>{{localize "Level2"}}</label>
+                          <select name="hero.system.level2-mode" data-dtype="Number">
+                              {{selectOptions numberModes selected=hero.system.level2-mode}}
+                          </select>
+                          <input type="number" name="hero.system.level2" value="{{hero.system.level2}}" />
+                      </div>
+                    </fieldset>
+                    <div class="form-group">
+                        <label>{{localize "AvailableSkillLevels"}}</label>
+                        <select name="hero.system.availableskilllevels-mode" data-dtype="Number">
+                            {{selectOptions numberModes selected=hero.system.availableskilllevels-mode}}
+                        </select>
+                        <input type="number" name="hero.system.availableskilllevels" value="{{hero.system.availableskilllevels}}" />
+                    </div>
+                </section>
+                <!-- NPC Tab -->
+                <section class="tab" data-tab="npc">
+                    <div class="form-group">
+                        <label>{{localize "Level"}}</label>
+                        <select name="npc.system.level-mode" data-dtype="Number">
+                            {{selectOptions numberModes selected=npc.system.level-mode}}
+                        </select>
+                        <input type="number" name="npc.system.level" value="{{npc.system.level}}" />
+                    </div>
+                    <div class="form-group">
+                        <label>{{localize "Monster"}} Value</label>
+                        <select name="npc.system.monster.mod-mode" data-dtype="Number">
+                            {{selectOptions numberModes selected=npc.system.monster.value-mode}}
+                        </select>
+                        <input type="number" name="npc.system.monster.value" value="{{npc.system.monster.value}}" />
+                    </div>
+                </section>
+                <!-- Skill Tab -->
+                <section class="tab" data-tab="skill">
+                    <div class="form-group">
+                        <label>{{localize "Trained"}}</label>
+                        <select name="skill.system.trained-mode" data-dtype="Boolean">
+                            {{selectOptions booleanModes selected=skill.system.trained-mode}}  
+                        </select>
+                        <input type="checkbox" name="skill.system.trained" {{checked skill.system.trained}} />
+                    </div>
+                    <div class="form-group">
+                        <label>{{localize "SkillMod"}}</label>
+                        <select name="skill.system.skillmod-mode" data-dtype="Number">
+                            {{selectOptions numberModes selected=skill.system.skillmod-mode}}
+                        </select>
+                        <input type="number" name="skill.system.skillmod" value="{{skill.system.skillmod}}" />
+                    </div>
+                    <div class="form-group">
+                        <label>{{localize "UsesLeft"}} Min</label>
+                        <select name="skill.system.usesleft.min-mode" data-dtype="Number">
+                            {{selectOptions numberModes selected=skill.system.usesleft.min-mode}}
+                        </select>
+                        <input type="number" name="skill.system.usesleft.min" value="{{skill.system.usesleft.min}}" />
+                    </div>
+                    <div class="form-group">
+                        <label>{{localize "UsesLeft"}} Current</label>
+                        <select name="skill.system.usesleft.value-mode" data-dtype="Number">
+                            {{selectOptions resourceModes selected=skill.system.usesleft.value-mode}}
+                        </select>
+                        <input type="number" name="skill.system.usesleft.value" value="{{skill.system.usesleft.value}}" />
+                    </div>
+                    <div class="form-group">
+                        <label>{{localize "UsesLeft"}} Temp</label>
+                        <select name="skill.system.usesleft.temp-mode" data-dtype="Number">
+                            {{selectOptions resourceModes selected=skill.system.usesleft.temp-mode}}
+                        </select>
+                        <input type="number" name="skill.system.usesleft.temp" value="{{skill.system.usesleft.temp}}" />
+                    </div>
+                    <div class="form-group">
+                        <label>{{localize "UsesLeft"}} Max</label>
+                        <select name="skill.system.usesleft.max-mode" data-dtype="Number">
+                            {{selectOptions numberModes selected=skill.system.usesleft.max-mode}}
+                        </select>
+                        <input type="number" name="skill.system.usesleft.max" value="{{skill.system.usesleft.max}}" />
+                    </div>
+                </section>
+                <!-- Equipment Tab -->
+                <section class="tab" data-tab="equipment">
+                    <div class="form-group">
+                        <label>{{localize "Type"}}</label>
+                        <select name="equipment.system.type-mode" data-dtype="String">
+                            {{selectOptions stringModes selected=equipment.system.type-mode}}
+                        </select>
+                        <input type="text" name="equipment.system.type" value="{{equipment.system.type}}" />
+                    </div>
+                    <div class="form-group">
+                        <label>{{localize "Bonus"}}</label>
+                        <select name="equipment.system.bonus-mode" data-dtype="Number">
+                            {{selectOptions numberModes selected=equipment.system.bonus-mode}}
+                        </select>
+                        <input type="number" name="equipment.system.bonus" value="{{equipment.system.bonus}}" />
+                    </div>
+                </section>
+                <!-- Spell Tab -->
+                <section class="tab" data-tab="spell">
+                    <div class="form-group">
+                        <label>{{localize "Level"}}</label>
+                        <select name="spell.system.level-mode" data-dtype="Number">
+                            {{selectOptions numberModes selected=spell.system.level-mode}}
+                        </select>
+                        <input type="number" name="spell.system.level" value="{{spell.system.level}}" />
+                    </div>
+                    <div class="form-group">
+                        <label>{{localize "Cost"}}</label>
+                        <select name="spell.system.cost-mode" data-dtype="Number">
+                            {{selectOptions numberModes selected=spell.system.cost-mode}}
+                        </select>
+                        <input type="number" name="spell.system.cost" value="{{spell.system.cost}}" />
+                    </div>
+                    <div class="form-group">
+                        <label>{{localize "Summary"}}</label>
+                        <select name="spell.system.summary-mode" data-dtype="String">
+                            {{selectOptions stringModes selected=spell.system.summary-mode}}
+                        </select>
+                        <input type="text" name="spell.system.summary" value="{{spell.system.summary}}" />
+                    </div>
+                </section>
+                <!-- Potion Tab -->
+                <section class="tab" data-tab="potion">
+                    <div class="form-group">
+                        <label>{{localize "Quantity"}}</label>
+                        <select name="potion.system.quantity-mode" data-dtype="Number">
+                            {{selectOptions numberModes selected=potion.system.quantity-mode}}
+                        </select>
+                        <input type="number" name="potion.system.quantity" value="{{potion.system.quantity}}" />
+                    </div>
+                </section>
+            </section>
+        </section>
+    </article>
+</form>

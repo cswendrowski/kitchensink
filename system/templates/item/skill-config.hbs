@@ -1,0 +1,128 @@
+<form class="{{cssClass}} flexcol" autocomplete="off">
+
+    {{!-- Sheet Header --}}
+    <header class="sheet-header flexrow">
+        <img class="profile" src="{{document.img}}" title="{{document.name}}" data-edit="img"/>
+        <h1 class="title">
+            <input name="name" type="text" value="{{document.name}}" placeholder="Skill Name"/>
+        </h1>
+    </header>
+
+
+    {{!-- Body --}}
+    <section class="sheet-body flexcol">
+
+        <section class="pages-container">
+            <div class="tab flexcol active" data-group="primary" data-tab="main">
+                {{!-- Main Configuration --}}
+                <div class="grid-container">
+                    {{!-- Parent Property Ref Ability --}}
+                    <div class="form-group property parentPropertyRefExp" data-name="system.ability">
+                        <label>{{ localize "Skill.Ability" }}</label>
+                        <select name="system.ability" >
+                            {{selectOptions abilityParentChoices selected=document.system.ability localize=true}}
+                        </select>
+                    </div>
+
+                    {{!-- Boolean Trained --}}
+                    <div class="form-group property booleanExp" data-name="system.trained">
+                        <label>{{ localize "Skill.Trained" }}</label>
+                        <input type="checkbox" name="system.trained" {{checked document.system.trained}}  />
+                    </div>
+
+                    {{!-- Number SkillMod --}}
+                    <div class="form-group property numberExp calc" data-name="system.skillmod">
+                        <label>{{ localize "Skill.SkillMod" }}</label>
+                        {{numberInput document.system.skillmod name="system.skillmod" disabled=false step=1}}
+                        <a class="calculator-toggle action" data-action="toggle-calculator">
+                            <i class="fa-solid fa-calculator"></i>
+                        </a>
+                        <div class="calculator">
+                            <input type="number" class="calc-input" placeholder="Enter number">
+                            <div class="calc-buttons">
+                                <button data-action="calc-mode" data-mode="add" class="mode-button active action" data-tooltip="Add">➕</button>
+                                <button data-action="calc-mode" data-mode="subtract" class="mode-button action" data-tooltip="Subtract">➖</button>
+                                <button data-action="calc-mode" data-mode="multiply" class="mode-button action" data-tooltip="Multiply">✖️</button>
+                                <button data-action="calc-mode" data-mode="divide" class="mode-button action" data-tooltip="Divide">➗</button>
+                            </div>
+                            <div class="calc-buttons">
+                                <button data-action="calc-submit" class="action" data-tooltip="Submit">✅</button>
+                                <button class="close-btn action" data-action="toggle-calculator" data-tooltip="Cancel">❌</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{!-- Number Skill --}}
+                    <div class="form-group property numberExp " data-name="system.skill">
+                        <label>{{ localize "Skill.Skill" }}</label>
+                        {{numberInput document.system.skill name="system.skill" disabled=true step=1}}
+                        
+                    </div>
+
+                    {{!-- Action Roll --}}
+                    {{#unless rollAction.hidden}}
+                    <button type="button" class="action" data-action="roll" {{#if rollAction.disabled}}disabled="disabled" data-tooltip="{{localize 'Disabled'}}"{{/if}}><i class="fa-solid fa-bolt" style="color: #000000;" ></i> {{ localize "Skill.Roll" }}</button>
+                    {{/unless}}
+
+                    {{!-- Action SimpleFightRoll --}}
+                    {{#unless simplefightrollAction.hidden}}
+                    <button type="button" class="action" data-action="simplefightroll" {{#if simplefightrollAction.disabled}}disabled="disabled" data-tooltip="{{localize 'Disabled'}}"{{/if}}><i class="fa-solid fa-bolt" style="color: #000000;" ></i> {{ localize "Skill.SimpleFightRoll" }}</button>
+                    {{/unless}}
+
+                </div>
+
+                {{!-- Tab Navigation --}}
+                <nav class="sheet-navigation tabs" data-group="secondary">
+                    <a class="item" data-tab="description"><i class="fa-solid fa-book"></i> {{ localize "Description" }}</a>
+                    <a class="item" data-tab="effects"><i class="fa-solid fa-sparkles"></i> {{ localize "Effects" }}</a>
+                </nav>
+
+                <section class="tabs-container">
+                    {{!-- Description Tab --}}
+                    <div class="tab description flexrow" data-group="secondary" data-tab="description">
+                        <fieldset>
+                            {{!-- Description --}}
+                            <div class="form-group stacked" data-name="system.description">
+                                <label>{{ localize "Description" }}</label>
+                                {{editor descriptionHTML target="system.description" button=false editable=editable engine="prosemirror" collaborate=false}}
+                            </div>
+                        </fieldset>
+                    </div>
+
+                
+                    {{!-- Effects Tab --}}
+                    <div class="tab effects" data-group="secondary" data-tab="effects" data-type="ActiveEffect">
+                        {{!-- Effects Table --}}
+                        <table class="display" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Image" }}</th>
+                                    <th data-class-name="priority">{{ localize "Name" }}</th>
+                                    <th>{{ localize "Source" }}</th>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Actions" }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each document.effects as |effect|}}
+                                    <tr data-id="{{effect._id}}" data-uuid="{{effect.uuid}}" data-type="ActiveEffect">
+                                        <td><img src="{{effect.img}}" title="{{effect.name}}" width=40 height=40 /></td>
+                                        <td data-tooltip='{{effect.description}}'>{{effect.name}}</td>
+                                        <td>{{effect.source}}</td>
+                                        <td>
+                                            <div class="flexrow">
+                                                <a class="row-action" data-action="edit" data-item="{{effect._id}}" data-tooltip="{{localize 'Edit'}}"><i class="fas fa-edit"></i></a>
+                                                <a class="row-action" data-action="sendToChat" data-item="{{effect._id}}" data-tooltip="{{localize 'SendToChat'}}"><i class="fas fa-message"></i></a>
+                                                <a class="row-action" data-action="delete" data-item="{{effect._id}}" data-tooltip="{{ localize 'Delete' }}"><i class="fas fa-delete-left"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+        </section>
+    </section>
+</form>

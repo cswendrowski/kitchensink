@@ -1,0 +1,263 @@
+{
+    "NoSingleDocument": "No Linked Document",
+    "EditModeWarning": "Active Effects are not applied while in Edit mode. Base values are displayed and used for all rolls, calculations and actions.",
+    "SendToChat": "Send to Chat",
+    "SETTINGS": {
+        "RoundUpDamageApplicationName": "Round Up Damage",
+        "RoundUpDamageApplicationHint": "When enabled, damage is rounded up to the nearest whole number. When disabled, damage is rounded down.",
+        "AllowTargetDamageApplicationName": "Allow Target Damage Application",
+        "AllowTargetDamageApplicationHint": "Whether or not to allow damage and healing on chat messages to be applied to targeted tokens in addition to selected tokens. Targeting does not require permissions, so this can allow players and GMs to apply damage to ANY token they can see."
+    },
+    "CONTEXT": {
+        "ApplyChanges": "Apply",
+        "ApplyDamage": "As Damage",
+        "ApplyHealing": "As Healing",
+        "ApplyTemp": "As Temporary"
+    },
+    "NOTIFICATIONS": {
+        "NoTokenSelected": "No Token is currently selected",
+        "NoTokenTargeted": "No Token is currently targeted"
+    },
+    "TYPES": {
+        "Actor": {
+            "actor": "Actor",
+            "hero": "Hero",
+            "npc": "NPC"
+        },
+        "Item": {
+            "item": "Item",
+            "skill": "Skill",
+            "equipment": "Equipment",
+            "spell": "Spell",
+            "potion": "Potion"
+        }
+    },
+    "EFFECTS": {
+        "AddOnce": "Add Once"
+    },
+    "hero": "Hero",
+    "Hero": {
+        "Hero": "Hero" ,
+        "PlainFields": "Plain Fields",
+        "Basic": "Basic",
+        "StringField": "String Field",
+        "NumberField": "Number Field",
+        "BooleanField": "Boolean Field",
+        "HtmlField": "Html Field"
+        ,
+        "Complex": "Complex",
+        "ResourceField": "Resource Field",
+        "TrackerField": "Tracker Field",
+        "AttributeField": "Attribute Field",
+        "MeasuredTemplateField": "Measured Template Field"
+        ,
+        "DateTime": "Date Time",
+        "DateField": "Date Field",
+        "TimeField": "Time Field",
+        "DateTimeField": "Date Time Field"
+        ,
+        "Dice": "Dice",
+        "DieField": "Die Field"
+        ,
+        "DocumentLinks": "Document Links",
+        "SkillsTable": "Skills Table",
+        "SingleDocumentField": "Single Document Field",
+        "ChoiceField": "Choice Field",
+        "MacroField": "Macro Field",
+        "PaperdollField": "Paperdoll Field",
+        "ExecuteMacro": "Execute Macro"
+        ,
+        "Info": "Info",
+        "BasicInfo": "Basic Info",
+        "HeroType": {
+            "label": "Hero Type",
+            "A": "A",
+            "B": "B",
+            "C": "C"
+        },
+        "DamageType": {
+            "label": "Damage Type",
+            "Cutting": "⚔️ Cutting",
+            "Piercing": "🤺 Piercing",
+            "Bludgeoning": "🔨 Bludgeoning"
+        },
+        "Summary": "Summary",
+        "Text2": "Locked Text Field",
+        "Background": "Background",
+        "BackgroundText": "Background Text",
+        "EndCombat": "End Combat",
+        "NextTurn": "Next Turn"
+        ,
+        "Level": "Level",
+        "Fate": "Fate",
+        "Shield": "Shield"
+        ,
+        "Wounds": "Wounds",
+        "Heat": "Heat"
+        ,
+        "Time": "Time",
+        "TimePassed": "Time Passed",
+        "OutOfTime": "Out Of Time",
+        "Level": "Level",
+        "Plain": "Plain",
+        "preApplyDamage": "pre Apply Damage",
+        "appliedDamage": "applied Damage",
+        "LevelUp": "Level Up",
+        "ExperienceTrack": "Experience Track"
+        ,
+        "Experience": "Experience",
+        "FlipACoin": "Flip A Coin"
+        ,
+        "Stats": "Stats",
+        "Attributes": "Attributes",
+        "Fight": "Fight",
+        "Flight": "Flight",
+        "Endure": "Endure",
+        "Persuade": "Persuade",
+        "Grit": "Grit"
+        ,
+        "StatusEffects": "Status Effects",
+        "Slowed": "Slowed",
+        "Dazed": "Dazed"
+        ,
+        "Counter": "Counter",
+        "Count": "Count",
+        "Reset": "Reset"
+        ,
+        "Increment": "Increment",
+        "Decrement": "Decrement"
+        ,
+        "combatStart": "combat Start",
+        "combatEnd": "combat End",
+        "roundStart": "round Start",
+        "roundEnd": "round End",
+        "turnStart": "turn Start",
+        "turnEnd": "turn End",
+        "turnIsNext": "turn Is Next",
+        "death": "death"
+        ,
+        "FancyCounter": "Fancy Counter",
+        "Count2": "Count 2",
+        "FancyCounterAmount": "Fancy Counter Amount",
+        "Increment2": "Increment 2",
+        "Decrement2": "Decrement 2",
+        "Reset2": "Reset 2"
+        ,
+        "Test": "Test",
+        "SomeThing": "Some Thing",
+        "AnotherThing": "Another Thing"
+        ,
+        "Health": "Health",
+        "HP": "HP",
+        "Defense": "Defense",
+        "Stealth": "Stealth"
+        ,
+        "Stagger": "Stagger",
+        "Recover": "Recover"
+        ,
+        "Mana": "Mana",
+        "Refill": "Refill"
+        ,
+        "DamageTrack": "Damage Track",
+        "Crisis": "Crisis",
+        "Heal": "Heal",
+        "Level2": "Level 2",
+        "Roll": "Roll"
+        ,
+        "Damage": "Damage",
+        "Damage": "Damage",
+        "HealDamageTrack": "Heal Damage Track",
+        "TakeBashing": "Take Bashing"
+        ,
+        "AvailableSkillLevels": "Available Skill Levels",
+        "Equipment": "Equipment",
+        "Armor": "Armor",
+        "Armors": "Armors",
+        "Weapons": "Weapons",
+        "Potion": "Potion"
+        ,
+        "Spells": "Spells",
+        "Skills": "Skills",
+        "VuetifySpells": "Vuetify Spells"
+    },
+    "npc": "NPC",
+    "NPC": {
+        "NPC": "NPC" ,
+        "Level": "Level",
+        "Monster": "Monster",
+        "Defense": "Defense",
+        "Armor": "Armor",
+        "Equipment": "Equipment"
+    },
+    "skill": "Skill",
+    "Skill": {
+        "Skill": "Skill" ,
+        "Ability": "Ability",
+        "Trained": "Trained",
+        "SkillMod": "Skill Mod",
+        "UsesLeft": "Uses Left",
+        "Die": "Die",
+        "Template": "Template",
+        "Skill": "Skill",
+        "Roll": "Roll",
+        "SimpleFightRoll": "Simple Fight Roll"
+    },
+    "equipment": "Equipment",
+    "Equipment": {
+        "Equipment": "Equipment" ,
+        "Type": {
+            "label": "Type",
+            "Armor": "Armor",
+            "Weapon": "Weapon"
+        },
+        "Bonus": "Bonus",
+        "ParentRefs": "Parent Refs",
+        "ParentAttribute": "Parent Attribute",
+        "ParentResource": "Parent Resource",
+        "ParentNumber": "Parent Number",
+        "ParentBoolean": "Parent Boolean",
+        "ParentDate": "Parent Date",
+        "ParentTime": "Parent Time",
+        "ParentDateTime": "Parent Date Time",
+        "ParentDie": "Parent Die",
+        "ParentString": "Parent String",
+        "ParentTracker": "Parent Tracker",
+        "ParentChoice": "Parent Choice",
+        "ParentPaperdoll": "Parent Paperdoll",
+        "ParentHtml": "Parent Html"
+    },
+    "spell": "Spell",
+    "Spell": {
+        "Spell": "Spell" ,
+        "Type": {
+            "label": "Type",
+            "Attack": "Attack",
+            "Defense": "Defense",
+            "Healing": "Healing"
+        },
+        "Class": {
+            "label": "Class",
+            "None": "None",
+            "Fire": "🔥Fire",
+            "Water": "💧Water",
+            "Earth": "🌍Earth",
+            "Air": "🌬️Air"
+        },
+        "Training": {
+            "label": "Training",
+            "Basic": "Basic",
+            "Advanced": "Advanced",
+            "Master": "Master"
+        },
+        "Level": "Level",
+        "Cost": "Cost",
+        "Summary": "Summary",
+        "Roll": "Roll"
+    },
+    "potion": "Potion",
+    "Potion": {
+        "Potion": "Potion" ,
+        "Quantity": "Quantity",
+        "Use": "Use"
+    }
+}

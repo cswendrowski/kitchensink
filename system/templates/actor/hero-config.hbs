@@ -1,0 +1,836 @@
+<form class="{{cssClass}} flexcol" autocomplete="off">
+
+    {{!-- Sheet Header --}}
+    <header class="sheet-header flexrow">
+        <img class="profile" src="{{document.img}}" title="{{document.name}}" data-edit="img"/>
+        <h1 class="title">
+            <input name="name" type="text" value="{{document.name}}" placeholder="Hero Name"/>
+        </h1>
+    </header>
+
+    <div class="notification warning">{{localize 'EditModeWarning'}}</div>
+
+    {{!-- Body --}}
+    <section class="sheet-body flexcol">
+        {{!-- Page Navigation --}}
+        <nav class="sheet-navigation pages" data-group="primary">
+            <a class="item" data-tab="main" data-background="texture"><i class="fa-solid fa-user"></i> {{ localize "Hero" }}</a>
+            <a class="item" data-tab="info" data-background="hideout"><i class="fa-solid fa-book"></i> {{ localize "Hero.Info" }}</a>
+            <a class="item" data-tab="stats" data-background="bricks"><i class="fa-solid fa-chart-line"></i> {{ localize "Hero.Stats" }}</a>
+            <a class="item" data-tab="equipment" data-background="food"><i class="fa-solid fa-backpack"></i> {{ localize "Hero.Equipment" }}</a>
+        </nav>
+
+        <section class="pages-container">
+            <div class="tab flexcol active" data-group="primary" data-tab="main">
+                {{!-- Main Configuration --}}
+                <div class="grid-container">
+                    <fieldset class="section">
+                        <legend>{{ localize "Hero.Health" }}</legend>
+
+                        {{!-- Resource HP --}}
+                        <fieldset style="border-color: #8B0000;" class="property resourceExp">
+                            <legend>{{ localize "Hero.HP" }}</legend>
+
+                            {{!-- Current --}}
+                            <div class="form-group" data-name="system.hp">
+                                <label>{{ localize "Current" }}</label>
+                                <div class="flexrow values">
+                                    {{numberInput document.system.hp.value name="system.hp.value" min=0 max=document.system.hp.max step=1 disabled=false}}
+                                
+                                    {{!-- Temp --}}
+                                    <input type="number" class="temp" value="{{document.system.hp.temp}}" step="1" name="system.hp.temp" min="0" data-tooltip="{{localize "Temporary"}}">
+                                
+                                    <a class="calculator-toggle action" data-action="toggle-calculator">
+                                        <i class="fa-solid fa-calculator"></i>
+                                    </a>
+                                    <div class="calculator">
+                                        <input type="number" class="calc-input" placeholder="Enter number">
+                                        <div class="calc-buttons">
+                                            <button data-action="calc-mode" data-mode="add" class="mode-button active action" data-tooltip="Add">➕</button>
+                                            <button data-action="calc-mode" data-mode="subtract" class="mode-button action" data-tooltip="Subtract">➖</button>
+                                            <button data-action="calc-mode" data-mode="multiply" class="mode-button action" data-tooltip="Multiply">✖️</button>
+                                            <button data-action="calc-mode" data-mode="divide" class="mode-button action" data-tooltip="Divide">➗</button>
+                                        </div>
+                                        <div class="calc-buttons">
+                                            <button data-action="calc-submit" class="action" data-tooltip="Submit">✅</button>
+                                            <button class="close-btn action" data-action="toggle-calculator" data-tooltip="Cancel">❌</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{!-- Max --}}
+                            <div class="form-group max" data-name="system.hp">
+                                <label>{{ localize "Max" }}</label>
+                                {{numberInput document.system.hp.max name="system.hp.max" min=0 step=1 disabled=true}}
+                            </div>
+
+                            {{!-- Progress Bar --}}
+                            <div class="form-group">
+                                <div class="progress-bar" name="hp" data-color-from="#8B0000" data-color-to="#33cc33" data-value="{{document.system.hp.value}}" data-max="{{document.system.hp.max}}"></div>
+                            </div>
+                        </fieldset>
+
+                        {{!-- Number Defense --}}
+                        <div class="form-group property numberExp " data-name="system.defense">
+                            <label>{{ localize "Hero.Defense" }}</label>
+                            {{numberInput document.system.defense name="system.defense" disabled=true step=1}}
+                            
+                        </div>
+
+                        {{!-- Number Stealth --}}
+                        <div class="form-group property numberExp calc" data-name="system.stealth">
+                            <label>{{ localize "Hero.Stealth" }}</label>
+                            {{numberInput document.system.stealth name="system.stealth" disabled=false step=1}}
+                            <a class="calculator-toggle action" data-action="toggle-calculator">
+                                <i class="fa-solid fa-calculator"></i>
+                            </a>
+                            <div class="calculator">
+                                <input type="number" class="calc-input" placeholder="Enter number">
+                                <div class="calc-buttons">
+                                    <button data-action="calc-mode" data-mode="add" class="mode-button active action" data-tooltip="Add">➕</button>
+                                    <button data-action="calc-mode" data-mode="subtract" class="mode-button action" data-tooltip="Subtract">➖</button>
+                                    <button data-action="calc-mode" data-mode="multiply" class="mode-button action" data-tooltip="Multiply">✖️</button>
+                                    <button data-action="calc-mode" data-mode="divide" class="mode-button action" data-tooltip="Divide">➗</button>
+                                </div>
+                                <div class="calc-buttons">
+                                    <button data-action="calc-submit" class="action" data-tooltip="Submit">✅</button>
+                                    <button class="close-btn action" data-action="toggle-calculator" data-tooltip="Cancel">❌</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{!-- Resource Stagger --}}
+                        <fieldset style="border-color: #006400;" class="property resourceExp">
+                            <legend>{{ localize "Hero.Stagger" }}</legend>
+
+                            {{!-- Current --}}
+                            <div class="form-group" data-name="system.stagger">
+                                <label>{{ localize "Current" }}</label>
+                                <div class="flexrow values">
+                                    {{numberInput document.system.stagger.value name="system.stagger.value" min=0 max=document.system.stagger.max step=1 disabled=false}}
+                                
+                                    {{!-- Temp --}}
+                                    <input type="number" class="temp" value="{{document.system.stagger.temp}}" step="1" name="system.stagger.temp" min="0" data-tooltip="{{localize "Temporary"}}">
+                                
+                                    <a class="calculator-toggle action" data-action="toggle-calculator">
+                                        <i class="fa-solid fa-calculator"></i>
+                                    </a>
+                                    <div class="calculator">
+                                        <input type="number" class="calc-input" placeholder="Enter number">
+                                        <div class="calc-buttons">
+                                            <button data-action="calc-mode" data-mode="add" class="mode-button active action" data-tooltip="Add">➕</button>
+                                            <button data-action="calc-mode" data-mode="subtract" class="mode-button action" data-tooltip="Subtract">➖</button>
+                                            <button data-action="calc-mode" data-mode="multiply" class="mode-button action" data-tooltip="Multiply">✖️</button>
+                                            <button data-action="calc-mode" data-mode="divide" class="mode-button action" data-tooltip="Divide">➗</button>
+                                        </div>
+                                        <div class="calc-buttons">
+                                            <button data-action="calc-submit" class="action" data-tooltip="Submit">✅</button>
+                                            <button class="close-btn action" data-action="toggle-calculator" data-tooltip="Cancel">❌</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{!-- Max --}}
+                            <div class="form-group max" data-name="system.stagger">
+                                <label>{{ localize "Max" }}</label>
+                                {{numberInput document.system.stagger.max name="system.stagger.max" min=0 step=1 disabled=true}}
+                            </div>
+
+                            {{!-- Progress Bar --}}
+                            <div class="form-group">
+                                <div class="progress-bar" name="stagger" data-color-from="#7FE37F" data-color-to="#40A440" data-value="{{document.system.stagger.value}}" data-max="{{document.system.stagger.max}}"></div>
+                            </div>
+                        </fieldset>
+
+                        {{!-- Action Recover --}}
+                        {{#unless recoverAction.hidden}}
+                        <button type="button" class="action" data-action="recover" {{#if recoverAction.disabled}}disabled="disabled" data-tooltip="{{localize 'Disabled'}}"{{/if}}><i class="fa-solid fa-bolt" style="color: #000000;" ></i> {{ localize "Hero.Recover" }}</button>
+                        {{/unless}}
+
+                        {{!-- Resource Mana --}}
+                        <fieldset style="border-color: #00008B;" class="property resourceExp">
+                            <legend>{{ localize "Hero.Mana" }}</legend>
+
+                            {{!-- Current --}}
+                            <div class="form-group" data-name="system.mana">
+                                <label>{{ localize "Current" }}</label>
+                                <div class="flexrow values">
+                                    {{numberInput document.system.mana.value name="system.mana.value" min=0 max=document.system.mana.max step=1 disabled=false}}
+                                
+                                    {{!-- Temp --}}
+                                    <input type="number" class="temp" value="{{document.system.mana.temp}}" step="1" name="system.mana.temp" min="0" data-tooltip="{{localize "Temporary"}}">
+                                
+                                    <a class="calculator-toggle action" data-action="toggle-calculator">
+                                        <i class="fa-solid fa-calculator"></i>
+                                    </a>
+                                    <div class="calculator">
+                                        <input type="number" class="calc-input" placeholder="Enter number">
+                                        <div class="calc-buttons">
+                                            <button data-action="calc-mode" data-mode="add" class="mode-button active action" data-tooltip="Add">➕</button>
+                                            <button data-action="calc-mode" data-mode="subtract" class="mode-button action" data-tooltip="Subtract">➖</button>
+                                            <button data-action="calc-mode" data-mode="multiply" class="mode-button action" data-tooltip="Multiply">✖️</button>
+                                            <button data-action="calc-mode" data-mode="divide" class="mode-button action" data-tooltip="Divide">➗</button>
+                                        </div>
+                                        <div class="calc-buttons">
+                                            <button data-action="calc-submit" class="action" data-tooltip="Submit">✅</button>
+                                            <button class="close-btn action" data-action="toggle-calculator" data-tooltip="Cancel">❌</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{!-- Max --}}
+                            <div class="form-group max" data-name="system.mana">
+                                <label>{{ localize "Max" }}</label>
+                                {{numberInput document.system.mana.max name="system.mana.max" min=0 step=1 disabled=true}}
+                            </div>
+
+                            {{!-- Progress Bar --}}
+                            <div class="form-group">
+                                <div class="progress-bar" name="mana" data-color-from="#7F7FFF" data-color-to="#4040CB" data-value="{{document.system.mana.value}}" data-max="{{document.system.mana.max}}"></div>
+                            </div>
+                        </fieldset>
+
+                        {{!-- Action Refill --}}
+                        {{#unless refillAction.hidden}}
+                        <button type="button" class="action" data-action="refill" {{#if refillAction.disabled}}disabled="disabled" data-tooltip="{{localize 'Disabled'}}"{{/if}}><i class="fa-duotone fa-solid fa-sparkles" style="color: #000000;" ></i> {{ localize "Hero.Refill" }}</button>
+                        {{/unless}}
+
+                        {{!-- Pips DamageTrack --}}
+                        <div class="form-group property pips" data-name="system.damagetrack" data-tooltip="{{document.system.damagetrack}}">
+                            <label>{{ localize "Hero.DamageTrack" }}</label>
+                            <div class="pips-container circles" data-style="circles" data-max="{{damagetrackMax}}" data-current="{{document.system.damagetrack}}" data-name="damagetrack" >
+                                {{#each damagetrack}}
+                                    <div class="pip{{#if this.checked}} filled{{/if}}"></div>
+                                {{/each}}
+                            </div>
+                        </div>
+
+                        {{!-- Number Crisis --}}
+                        <div class="form-group property numberExp " data-name="system.crisis">
+                            <label>{{ localize "Hero.Crisis" }}</label>
+                            {{numberInput document.system.crisis name="system.crisis" disabled=true step=1}}
+                            
+                        </div>
+
+                        {{!-- Action Heal --}}
+                        {{#unless healAction.hidden}}
+                        <button type="button" class="action" data-action="heal" {{#if healAction.disabled}}disabled="disabled" data-tooltip="{{localize 'Disabled'}}"{{/if}}><i class="fa-solid fa-bolt" style="color: #000000;" ></i> {{ localize "Hero.Heal" }}</button>
+                        {{/unless}}
+
+                        {{!-- Number Level2 --}}
+                        <div class="form-group property numberExp calc" data-name="system.level2">
+                            <label>{{ localize "Hero.Level2" }}</label>
+                            {{numberInput document.system.level2 name="system.level2" disabled=false step=1}}
+                            <a class="calculator-toggle action" data-action="toggle-calculator">
+                                <i class="fa-solid fa-calculator"></i>
+                            </a>
+                            <div class="calculator">
+                                <input type="number" class="calc-input" placeholder="Enter number">
+                                <div class="calc-buttons">
+                                    <button data-action="calc-mode" data-mode="add" class="mode-button active action" data-tooltip="Add">➕</button>
+                                    <button data-action="calc-mode" data-mode="subtract" class="mode-button action" data-tooltip="Subtract">➖</button>
+                                    <button data-action="calc-mode" data-mode="multiply" class="mode-button action" data-tooltip="Multiply">✖️</button>
+                                    <button data-action="calc-mode" data-mode="divide" class="mode-button action" data-tooltip="Divide">➗</button>
+                                </div>
+                                <div class="calc-buttons">
+                                    <button data-action="calc-submit" class="action" data-tooltip="Submit">✅</button>
+                                    <button class="close-btn action" data-action="toggle-calculator" data-tooltip="Cancel">❌</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{!-- Action Roll --}}
+                        {{#unless rollAction.hidden}}
+                        <button type="button" class="action" data-action="roll" {{#if rollAction.disabled}}disabled="disabled" data-tooltip="{{localize 'Disabled'}}"{{/if}}><i class="fa-solid fa-bolt" style="color: #000000;" ></i> {{ localize "Hero.Roll" }}</button>
+                        {{/unless}}
+
+                    </fieldset>
+
+                    <fieldset class="section">
+                        <legend>{{ localize "Hero.Damage" }}</legend>
+
+                        {{!-- Damage Track Damage --}}
+                        <div class="form-group property damage-track" data-name="system.damage">
+                            <label>{{ localize "Hero.Damage" }}</label>
+                            <div class="damage-track-container" data-max="5" data-current="{{document.system.damage}}" data-name="damage" >
+                                {{#each damage}}
+                                    <div class="damage {{type}} {{tier}}" data-tooltip="{{type}}"></div>
+                                {{/each}}
+                            </div>
+                        </div>
+
+                        {{!-- Action HealDamageTrack --}}
+                        {{#unless healdamagetrackAction.hidden}}
+                        <button type="button" class="action" data-action="healdamagetrack" {{#if healdamagetrackAction.disabled}}disabled="disabled" data-tooltip="{{localize 'Disabled'}}"{{/if}}><i class="fa-solid fa-flask-round-potion" style="color: #000000;" ></i> {{ localize "Hero.HealDamageTrack" }}</button>
+                        {{/unless}}
+
+                        {{!-- Action TakeBashing --}}
+                        {{#unless takebashingAction.hidden}}
+                        <button type="button" class="action" data-action="takebashing" {{#if takebashingAction.disabled}}disabled="disabled" data-tooltip="{{localize 'Disabled'}}"{{/if}}><i class="fa-solid fa-bolt" style="color: #000000;" ></i> {{ localize "Hero.TakeBashing" }}</button>
+                        {{/unless}}
+
+                    </fieldset>
+
+                </div>
+
+                {{!-- Tab Navigation --}}
+                <nav class="sheet-navigation tabs" data-group="secondary">
+                    <a class="item" data-tab="description"><i class="fa-solid fa-book"></i> {{ localize "Description" }}</a>
+                    <a class="item" data-tab="spells"><i class="fa-solid fa-table"></i> {{ localize "Hero.Spells" }}</a>
+                    <a class="item" data-tab="skills"><i class="fa-solid fa-table"></i> {{ localize "Hero.Skills" }}</a>
+                    <a class="item" data-tab="effects"><i class="fa-solid fa-sparkles"></i> {{ localize "Effects" }}</a>
+                </nav>
+
+                <section class="tabs-container">
+                    {{!-- Description Tab --}}
+                    <div class="tab description flexrow" data-group="secondary" data-tab="description">
+                        <fieldset>
+                            {{!-- Description --}}
+                            <div class="form-group stacked" data-name="system.description">
+                                <label>{{ localize "Description" }}</label>
+                                {{editor descriptionHTML target="system.description" button=false editable=editable engine="prosemirror" collaborate=false}}
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    {{!-- Spells Document Array --}}
+                    <div class="tab" data-group="secondary" data-tab="spells" data-type="spell" >
+                        {{!-- Spells Table --}}
+                        <table class="display compact" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Image" }}</th>
+                                    <th data-class-name="priority">{{ localize "Name" }}</th>
+                                    <th>{{ localize "Spell.Type.label" }}</th>
+                                    <th>{{ localize "Spell.Class.label" }}</th>
+                                    <th>{{ localize "Spell.Level" }}</th>
+                                    <th>{{ localize "Spell.Cost" }}</th>
+                                    <th>{{ localize "Spell.Summary" }}</th>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Actions" }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each document.system.spells as |item|}}
+                                    <tr data-id="{{item._id}}" data-uuid="{{item.uuid}}" data-type="{{item.type}}">
+                                        <td><img src="{{item.img}}" title="{{item.name}}" width=40 height=40 /></td>
+                                        <td data-tooltip='{{item.system.description}}'>{{item.name}}</td>
+                                        <td>{{item.system.type}}</td>
+                                        <td>{{item.system.class}}</td>
+                                        <td>{{item.system.level}}</td>
+                                        <td>{{item.system.cost}}</td>
+                                        <td>{{item.system.summary}}</td>
+                                        <td>
+                                            <div class="flexrow">
+                                                {{#each ../SpellItemActions}}
+                                                    <a class="row-action item-custom-action" data-action="{{this.action}}" data-type="Spell" data-item="{{item._id}}" data-tooltip="{{localize this.label}}"><i class="{{this.icon}}"></i></a>
+                                                {{/each}}
+                                                <a class="row-action" data-action="edit" data-item="{{item._id}}" data-tooltip="{{localize 'Edit'}}"><i class="fas fa-edit"></i></a>
+                                                <a class="row-action" data-action="sendToChat" data-item="{{item._id}}" data-tooltip="{{localize 'SendToChat'}}"><i class="fas fa-message"></i></a>
+                                                <a class="row-action" data-action="delete" data-item="{{item._id}}" data-tooltip="{{ localize 'Delete' }}"><i class="fas fa-delete-left"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {{!-- Skills Document Array --}}
+                    <div class="tab" data-group="secondary" data-tab="skills" data-type="skill" >
+                        {{!-- Skills Table --}}
+                        <table class="display compact" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Image" }}</th>
+                                    <th data-class-name="priority">{{ localize "Name" }}</th>
+                                    <th>{{ localize "Skill.Ability" }}</th>
+                                    <th>{{ localize "Skill.Trained" }}</th>
+                                    <th>{{ localize "Skill.SkillMod" }}</th>
+                                    <th>{{ localize "Skill.UsesLeft" }}</th>
+                                    <th>{{ localize "Skill.Skill" }}</th>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Actions" }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each document.system.skills as |item|}}
+                                    <tr data-id="{{item._id}}" data-uuid="{{item.uuid}}" data-type="{{item.type}}">
+                                        <td><img src="{{item.img}}" title="{{item.name}}" width=40 height=40 /></td>
+                                        <td data-tooltip='{{item.system.description}}'>{{item.name}}</td>
+                                        <td>{{humanize item.system.ability}}</td>
+                                        <td>{{item.system.trained}}</td>
+                                        <td>{{item.system.skillmod}}</td>
+                                        <td>{{item.system.usesleft.value}}</td>
+                                        <td>{{item.system.skill}}</td>
+                                        <td>
+                                            <div class="flexrow">
+                                                {{#each ../SkillItemActions}}
+                                                    <a class="row-action item-custom-action" data-action="{{this.action}}" data-type="Skill" data-item="{{item._id}}" data-tooltip="{{localize this.label}}"><i class="{{this.icon}}"></i></a>
+                                                {{/each}}
+                                                <a class="row-action" data-action="edit" data-item="{{item._id}}" data-tooltip="{{localize 'Edit'}}"><i class="fas fa-edit"></i></a>
+                                                <a class="row-action" data-action="sendToChat" data-item="{{item._id}}" data-tooltip="{{localize 'SendToChat'}}"><i class="fas fa-message"></i></a>
+                                                <a class="row-action" data-action="delete" data-item="{{item._id}}" data-tooltip="{{ localize 'Delete' }}"><i class="fas fa-delete-left"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+
+                
+                    {{!-- Effects Tab --}}
+                    <div class="tab effects" data-group="secondary" data-tab="effects" data-type="ActiveEffect">
+                        {{!-- Effects Table --}}
+                        <table class="display" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Image" }}</th>
+                                    <th data-class-name="priority">{{ localize "Name" }}</th>
+                                    <th>{{ localize "Source" }}</th>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Actions" }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each applicableEffects as |effect|}}
+                                    <tr data-id="{{effect._id}}" data-uuid="{{effect.uuid}}" data-type="ActiveEffect">
+                                        <td><img src="{{effect.img}}" title="{{effect.name}}" width=40 height=40 /></td>
+                                        <td data-tooltip='{{effect.description}}'>{{effect.name}}</td>
+                                        <td>{{effect.source}}</td>
+                                        <td>
+                                            <div class="flexrow">
+                                                <a class="row-action" data-action="edit" data-item="{{effect._id}}" data-tooltip="{{localize 'Edit'}}"><i class="fas fa-edit"></i></a>
+                                                <a class="row-action" data-action="sendToChat" data-item="{{effect._id}}" data-tooltip="{{localize 'SendToChat'}}"><i class="fas fa-message"></i></a>
+                                                <a class="row-action" data-action="delete" data-item="{{effect._id}}" data-tooltip="{{ localize 'Delete' }}"><i class="fas fa-delete-left"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <div class="tab flexcol" data-group="primary" data-tab="info">
+                <div class="grid-container">
+                    <fieldset class="section">
+                        <legend>{{ localize "Hero.BasicInfo" }}</legend>
+
+                        {{!-- String Type --}}
+                        <div class="form-group property stringExp" data-name="system.type">
+                            <label>{{ localize "Hero.Type.label" }}</label>
+                            <select name="system.type" >
+                                {{selectOptions typeChoices selected=document.system.type localize=true}}
+                            </select>
+                        </div>
+
+                        {{!-- String Summary --}}
+                        <div class="form-group property stringExp" data-name="system.summary">
+                            <label>{{ localize "Hero.Summary" }}</label>
+                            <input name="system.summary" type="text" value="{{document.system.summary}}" placeholder="Summary"  />
+                        </div>
+
+                        {{!-- HTML Background --}}
+                        <div class="form-group stacked double-wide property htmlExp" data-name="system.background">
+                            <label>{{ localize "Hero.Background" }}</label>
+                            {{editor descriptionHTML target="system.background" button=false editable=editable engine="prosemirror" collaborate=false disabled=false}}
+                        </div>
+
+                    </fieldset>
+
+                    <fieldset class="section">
+                        <legend>{{ localize "Hero.Level" }}</legend>
+
+                        {{!-- Boolean OutOfTime --}}
+                        <div class="form-group property booleanExp" data-name="system.outoftime">
+                            <label>{{ localize "Hero.OutOfTime" }}</label>
+                            <input type="checkbox" name="system.outoftime" {{checked document.system.outoftime}}  />
+                        </div>
+
+                        {{!-- Number Level --}}
+                        <div class="form-group property numberExp calc" data-name="system.level">
+                            <label><i class="fa-solid fa-cube" style="color: #000000;"></i> {{ localize "Hero.Level" }}</label>
+                            {{numberInput document.system.level name="system.level" disabled=false step=1}}
+                            <a class="calculator-toggle action" data-action="toggle-calculator">
+                                <i class="fa-solid fa-calculator"></i>
+                            </a>
+                            <div class="calculator">
+                                <input type="number" class="calc-input" placeholder="Enter number">
+                                <div class="calc-buttons">
+                                    <button data-action="calc-mode" data-mode="add" class="mode-button active action" data-tooltip="Add">➕</button>
+                                    <button data-action="calc-mode" data-mode="subtract" class="mode-button action" data-tooltip="Subtract">➖</button>
+                                    <button data-action="calc-mode" data-mode="multiply" class="mode-button action" data-tooltip="Multiply">✖️</button>
+                                    <button data-action="calc-mode" data-mode="divide" class="mode-button action" data-tooltip="Divide">➗</button>
+                                </div>
+                                <div class="calc-buttons">
+                                    <button data-action="calc-submit" class="action" data-tooltip="Submit">✅</button>
+                                    <button class="close-btn action" data-action="toggle-calculator" data-tooltip="Cancel">❌</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{!-- Action LevelUp --}}
+                        {{#unless levelupAction.hidden}}
+                        <button type="button" class="action" data-action="levelup" {{#if levelupAction.disabled}}disabled="disabled" data-tooltip="{{localize 'Disabled'}}"{{/if}}><i class="fa-solid fa-bolt" style="color: #000000;" ></i> {{ localize "Hero.LevelUp" }}</button>
+                        {{/unless}}
+
+                        {{!-- Pips ExperienceTrack --}}
+                        <div class="form-group property pips" data-name="system.experiencetrack" data-tooltip="{{document.system.experiencetrack}}">
+                            <label>{{ localize "Hero.ExperienceTrack" }}</label>
+                            <div class="pips-container circles" data-style="circles" data-max="{{experiencetrackMax}}" data-current="{{document.system.experiencetrack}}" data-name="experiencetrack" >
+                                {{#each experiencetrack}}
+                                    <div class="pip{{#if this.checked}} filled{{/if}}"></div>
+                                {{/each}}
+                            </div>
+                        </div>
+
+                    </fieldset>
+
+                    {{!-- Action FlipACoin --}}
+                    {{#unless flipacoinAction.hidden}}
+                    <button type="button" class="action" data-action="flipacoin" {{#if flipacoinAction.disabled}}disabled="disabled" data-tooltip="{{localize 'Disabled'}}"{{/if}}><i class="fa-solid fa-bolt" style="color: #000000;" ></i> {{ localize "Hero.FlipACoin" }}</button>
+                    {{/unless}}
+
+                </div>
+
+                {{!-- Tab Navigation --}}
+                <nav class="sheet-navigation tabs info-nav" data-group="secondary">
+                </nav>
+
+                <section class="tabs-container info-container">
+                </section>
+            </div>
+
+            <div class="tab flexcol" data-group="primary" data-tab="stats">
+                <div class="grid-container">
+                    <fieldset class="section">
+                        <legend>{{ localize "Hero.Attributes" }}</legend>
+
+                        {{!-- Attribute Fight --}}
+                        <div class="form-group attributeExp" data-name="system.fight">
+                            <label>{{ localize "Hero.Fight" }}</label>
+                            <div class="mod">{{document.system.fight.mod}}</div>
+                            {{numberInput document.system.fight.value name="system.fight.value" step=1 min=1 disabled=false}}
+                        </div>
+
+                        {{!-- Attribute Flight --}}
+                        <div class="form-group attributeExp" data-name="system.flight">
+                            <label>{{ localize "Hero.Flight" }}</label>
+                            <div class="mod">{{document.system.flight.mod}}</div>
+                            {{numberInput document.system.flight.value name="system.flight.value" step=1 min=1 disabled=false}}
+                        </div>
+
+                        {{!-- Attribute Endure --}}
+                        <div class="form-group attributeExp" data-name="system.endure">
+                            <label>{{ localize "Hero.Endure" }}</label>
+                            <div class="mod">{{document.system.endure.mod}}</div>
+                            {{numberInput document.system.endure.value name="system.endure.value" step=1 min=1 disabled=false}}
+                        </div>
+
+                        {{!-- Attribute Persuade --}}
+                        <div class="form-group attributeExp" data-name="system.persuade">
+                            <label>{{ localize "Hero.Persuade" }}</label>
+                            <div class="mod">{{document.system.persuade.mod}}</div>
+                            {{numberInput document.system.persuade.value name="system.persuade.value" step=1 min=1 disabled=false}}
+                        </div>
+
+                        {{!-- Attribute Grit --}}
+                        <div class="form-group attributeExp no-mod" data-name="system.grit">
+                            <label>{{ localize "Hero.Grit" }}</label>
+                            {{numberInput document.system.grit.value name="system.grit.value" step=1 min=1 disabled=false}}
+                        </div>
+
+                    </fieldset>
+
+                    <fieldset class="section">
+                        <legend>{{ localize "Hero.StatusEffects" }}</legend>
+
+                        {{!-- Boolean Slowed --}}
+                        <div class="form-group property booleanExp" data-name="system.slowed">
+                            <label>{{ localize "Hero.Slowed" }}</label>
+                            <input type="checkbox" name="system.slowed" {{checked document.system.slowed}}  />
+                        </div>
+
+                        {{!-- Boolean Dazed --}}
+                        <div class="form-group property booleanExp" data-name="system.dazed">
+                            <label>{{ localize "Hero.Dazed" }}</label>
+                            <input type="checkbox" name="system.dazed" {{checked document.system.dazed}}  />
+                        </div>
+
+                    </fieldset>
+
+                    <fieldset class="section">
+                        <legend>{{ localize "Hero.Counter" }}</legend>
+
+                        {{!-- Number Count --}}
+                        <div class="form-group property numberExp " data-name="system.count">
+                            <label>{{ localize "Hero.Count" }}</label>
+                            {{numberInput document.system.count name="system.count" disabled=true step=1}}
+                            
+                        </div>
+
+                        {{!-- Action Increment --}}
+                        {{#unless incrementAction.hidden}}
+                        <button type="button" class="action" data-action="increment" {{#if incrementAction.disabled}}disabled="disabled" data-tooltip="{{localize 'Disabled'}}"{{/if}}><i class="fa-solid fa-bolt" style="color: #000000;" ></i> {{ localize "Hero.Increment" }}</button>
+                        {{/unless}}
+
+                        {{!-- Action Decrement --}}
+                        {{#unless decrementAction.hidden}}
+                        <button type="button" class="action" data-action="decrement" {{#if decrementAction.disabled}}disabled="disabled" data-tooltip="{{localize 'Disabled'}}"{{/if}}><i class="fa-solid fa-bolt" style="color: #000000;" ></i> {{ localize "Hero.Decrement" }}</button>
+                        {{/unless}}
+
+                        {{!-- Action Reset --}}
+                        {{#unless resetAction.hidden}}
+                        <button type="button" class="action" data-action="reset" {{#if resetAction.disabled}}disabled="disabled" data-tooltip="{{localize 'Disabled'}}"{{/if}}><i class="fa-solid fa-bolt" style="color: #000000;" ></i> {{ localize "Hero.Reset" }}</button>
+                        {{/unless}}
+
+                    </fieldset>
+
+                    <fieldset class="section">
+                        <legend>{{ localize "Hero.FancyCounter" }}</legend>
+
+                        {{!-- Number Count2 --}}
+                        <div class="form-group property numberExp " data-name="system.count2">
+                            <label>{{ localize "Hero.Count2" }}</label>
+                            {{numberInput document.system.count2 name="system.count2" disabled=true step=1}}
+                            
+                        </div>
+
+                        {{!-- Number FancyCounterAmount --}}
+                        <div class="form-group property numberExp calc" data-name="system.fancycounteramount">
+                            <label>{{ localize "Hero.FancyCounterAmount" }}</label>
+                            {{numberInput document.system.fancycounteramount name="system.fancycounteramount" disabled=false step=1}}
+                            <a class="calculator-toggle action" data-action="toggle-calculator">
+                                <i class="fa-solid fa-calculator"></i>
+                            </a>
+                            <div class="calculator">
+                                <input type="number" class="calc-input" placeholder="Enter number">
+                                <div class="calc-buttons">
+                                    <button data-action="calc-mode" data-mode="add" class="mode-button active action" data-tooltip="Add">➕</button>
+                                    <button data-action="calc-mode" data-mode="subtract" class="mode-button action" data-tooltip="Subtract">➖</button>
+                                    <button data-action="calc-mode" data-mode="multiply" class="mode-button action" data-tooltip="Multiply">✖️</button>
+                                    <button data-action="calc-mode" data-mode="divide" class="mode-button action" data-tooltip="Divide">➗</button>
+                                </div>
+                                <div class="calc-buttons">
+                                    <button data-action="calc-submit" class="action" data-tooltip="Submit">✅</button>
+                                    <button class="close-btn action" data-action="toggle-calculator" data-tooltip="Cancel">❌</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{!-- Action Increment2 --}}
+                        {{#unless increment2Action.hidden}}
+                        <button type="button" class="action" data-action="increment2" {{#if increment2Action.disabled}}disabled="disabled" data-tooltip="{{localize 'Disabled'}}"{{/if}}><i class="fa-solid fa-bolt" style="color: #000000;" ></i> {{ localize "Hero.Increment2" }}</button>
+                        {{/unless}}
+
+                        {{!-- Action Decrement2 --}}
+                        {{#unless decrement2Action.hidden}}
+                        <button type="button" class="action" data-action="decrement2" {{#if decrement2Action.disabled}}disabled="disabled" data-tooltip="{{localize 'Disabled'}}"{{/if}}><i class="fa-solid fa-bolt" style="color: #000000;" ></i> {{ localize "Hero.Decrement2" }}</button>
+                        {{/unless}}
+
+                        {{!-- Action Reset2 --}}
+                        {{#unless reset2Action.hidden}}
+                        <button type="button" class="action" data-action="reset2" {{#if reset2Action.disabled}}disabled="disabled" data-tooltip="{{localize 'Disabled'}}"{{/if}}><i class="fa-solid fa-bolt" style="color: #000000;" ></i> {{ localize "Hero.Reset2" }}</button>
+                        {{/unless}}
+
+                    </fieldset>
+
+                    <fieldset class="section">
+                        <legend>{{ localize "Hero.Test" }}</legend>
+
+                        {{!-- Number SomeThing --}}
+                        <div class="form-group property numberExp calc" data-name="system.something">
+                            <label>{{ localize "Hero.SomeThing" }}</label>
+                            {{numberInput document.system.something name="system.something" disabled=false step=1}}
+                            <a class="calculator-toggle action" data-action="toggle-calculator">
+                                <i class="fa-solid fa-calculator"></i>
+                            </a>
+                            <div class="calculator">
+                                <input type="number" class="calc-input" placeholder="Enter number">
+                                <div class="calc-buttons">
+                                    <button data-action="calc-mode" data-mode="add" class="mode-button active action" data-tooltip="Add">➕</button>
+                                    <button data-action="calc-mode" data-mode="subtract" class="mode-button action" data-tooltip="Subtract">➖</button>
+                                    <button data-action="calc-mode" data-mode="multiply" class="mode-button action" data-tooltip="Multiply">✖️</button>
+                                    <button data-action="calc-mode" data-mode="divide" class="mode-button action" data-tooltip="Divide">➗</button>
+                                </div>
+                                <div class="calc-buttons">
+                                    <button data-action="calc-submit" class="action" data-tooltip="Submit">✅</button>
+                                    <button class="close-btn action" data-action="toggle-calculator" data-tooltip="Cancel">❌</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{!-- Number AnotherThing --}}
+                        <div class="form-group property numberExp calc" data-name="system.anotherthing">
+                            <label>{{ localize "Hero.AnotherThing" }}</label>
+                            {{numberInput document.system.anotherthing name="system.anotherthing" disabled=false step=1}}
+                            <a class="calculator-toggle action" data-action="toggle-calculator">
+                                <i class="fa-solid fa-calculator"></i>
+                            </a>
+                            <div class="calculator">
+                                <input type="number" class="calc-input" placeholder="Enter number">
+                                <div class="calc-buttons">
+                                    <button data-action="calc-mode" data-mode="add" class="mode-button active action" data-tooltip="Add">➕</button>
+                                    <button data-action="calc-mode" data-mode="subtract" class="mode-button action" data-tooltip="Subtract">➖</button>
+                                    <button data-action="calc-mode" data-mode="multiply" class="mode-button action" data-tooltip="Multiply">✖️</button>
+                                    <button data-action="calc-mode" data-mode="divide" class="mode-button action" data-tooltip="Divide">➗</button>
+                                </div>
+                                <div class="calc-buttons">
+                                    <button data-action="calc-submit" class="action" data-tooltip="Submit">✅</button>
+                                    <button class="close-btn action" data-action="toggle-calculator" data-tooltip="Cancel">❌</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </fieldset>
+
+                </div>
+
+                {{!-- Tab Navigation --}}
+                <nav class="sheet-navigation tabs stats-nav" data-group="secondary">
+                </nav>
+
+                <section class="tabs-container stats-container">
+                </section>
+            </div>
+
+            <div class="tab flexcol" data-group="primary" data-tab="equipment">
+                <div class="grid-container">
+                    {{!-- Single Document Armor --}}
+                    <div class="form-group property single-document" data-name="system.armor" data-type="equipment">
+                        <label>{{ localize "Hero.Armor" }}</label>
+                        {{#if armorHasContentLink}}
+                        <div class="single-document-content">
+                            {{{armorContentLink}}}
+                            <a class="single-document-remove" data-name="system.armor" data-action="remove" style="flex: 0;margin-left: 0.25rem;"><i class="fa-solid fa-delete-left"></i></a>
+                        </div>
+                        {{else}}
+                        <p class="single-document-none">{{ localize "NoSingleDocument" }}</p>
+                        {{/if}}
+                    </div>
+
+                </div>
+
+                {{!-- Tab Navigation --}}
+                <nav class="sheet-navigation tabs equipment-nav" data-group="secondary">
+                    <a class="item" data-tab="armors"><i class="fa-solid fa-table"></i> {{ localize "Hero.Armors" }}</a>
+                    <a class="item" data-tab="weapons"><i class="fa-solid fa-table"></i> {{ localize "Hero.Weapons" }}</a>
+                    <a class="item" data-tab="potion"><i class="fa-solid fa-table"></i> {{ localize "Hero.Potion" }}</a>
+                </nav>
+
+                <section class="tabs-container equipment-container">
+                    {{!-- Armors Document Array --}}
+                    <div class="tab" data-group="secondary" data-tab="armors" data-type="equipment" >
+                        {{!-- Armors Table --}}
+                        <table class="display compact" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Image" }}</th>
+                                    <th data-class-name="priority">{{ localize "Name" }}</th>
+                                    <th>{{ localize "Equipment.Type.label" }}</th>
+                                    <th>{{ localize "Equipment.Bonus" }}</th>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Actions" }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each document.system.armors as |item|}}
+                                    <tr data-id="{{item._id}}" data-uuid="{{item.uuid}}" data-type="{{item.type}}">
+                                        <td><img src="{{item.img}}" title="{{item.name}}" width=40 height=40 /></td>
+                                        <td data-tooltip='{{item.system.description}}'>{{item.name}}</td>
+                                        <td>{{item.system.type}}</td>
+                                        <td>{{item.system.bonus}}</td>
+                                        <td>
+                                            <div class="flexrow">
+                                                {{#each ../EquipmentItemActions}}
+                                                    <a class="row-action item-custom-action" data-action="{{this.action}}" data-type="Equipment" data-item="{{item._id}}" data-tooltip="{{localize this.label}}"><i class="{{this.icon}}"></i></a>
+                                                {{/each}}
+                                                <a class="row-action" data-action="edit" data-item="{{item._id}}" data-tooltip="{{localize 'Edit'}}"><i class="fas fa-edit"></i></a>
+                                                <a class="row-action" data-action="sendToChat" data-item="{{item._id}}" data-tooltip="{{localize 'SendToChat'}}"><i class="fas fa-message"></i></a>
+                                                <a class="row-action" data-action="delete" data-item="{{item._id}}" data-tooltip="{{ localize 'Delete' }}"><i class="fas fa-delete-left"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {{!-- Weapons Document Array --}}
+                    <div class="tab" data-group="secondary" data-tab="weapons" data-type="equipment" >
+                        {{!-- Weapons Table --}}
+                        <table class="display compact" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Image" }}</th>
+                                    <th data-class-name="priority">{{ localize "Name" }}</th>
+                                    <th>{{ localize "Equipment.Type.label" }}</th>
+                                    <th>{{ localize "Equipment.Bonus" }}</th>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Actions" }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each document.system.weapons as |item|}}
+                                    <tr data-id="{{item._id}}" data-uuid="{{item.uuid}}" data-type="{{item.type}}">
+                                        <td><img src="{{item.img}}" title="{{item.name}}" width=40 height=40 /></td>
+                                        <td data-tooltip='{{item.system.description}}'>{{item.name}}</td>
+                                        <td>{{item.system.type}}</td>
+                                        <td>{{item.system.bonus}}</td>
+                                        <td>
+                                            <div class="flexrow">
+                                                {{#each ../EquipmentItemActions}}
+                                                    <a class="row-action item-custom-action" data-action="{{this.action}}" data-type="Equipment" data-item="{{item._id}}" data-tooltip="{{localize this.label}}"><i class="{{this.icon}}"></i></a>
+                                                {{/each}}
+                                                <a class="row-action" data-action="edit" data-item="{{item._id}}" data-tooltip="{{localize 'Edit'}}"><i class="fas fa-edit"></i></a>
+                                                <a class="row-action" data-action="sendToChat" data-item="{{item._id}}" data-tooltip="{{localize 'SendToChat'}}"><i class="fas fa-message"></i></a>
+                                                <a class="row-action" data-action="delete" data-item="{{item._id}}" data-tooltip="{{ localize 'Delete' }}"><i class="fas fa-delete-left"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {{!-- Potion Document Array --}}
+                    <div class="tab" data-group="secondary" data-tab="potion" data-type="potion" >
+                        {{!-- Potion Table --}}
+                        <table class="display compact" style="width: 100%">
+                            <thead>
+                                <tr>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Image" }}</th>
+                                    <th data-class-name="priority">{{ localize "Name" }}</th>
+                                    <th>{{ localize "Potion.Quantity" }}</th>
+                                    <th data-class-name="priority" data-orderable="false">{{ localize "Actions" }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each document.system.potion as |item|}}
+                                    <tr data-id="{{item._id}}" data-uuid="{{item.uuid}}" data-type="{{item.type}}">
+                                        <td><img src="{{item.img}}" title="{{item.name}}" width=40 height=40 /></td>
+                                        <td data-tooltip='{{item.system.description}}'>{{item.name}}</td>
+                                        <td>{{item.system.quantity}}</td>
+                                        <td>
+                                            <div class="flexrow">
+                                                {{#each ../PotionItemActions}}
+                                                    <a class="row-action item-custom-action" data-action="{{this.action}}" data-type="Potion" data-item="{{item._id}}" data-tooltip="{{localize this.label}}"><i class="{{this.icon}}"></i></a>
+                                                {{/each}}
+                                                <a class="row-action" data-action="edit" data-item="{{item._id}}" data-tooltip="{{localize 'Edit'}}"><i class="fas fa-edit"></i></a>
+                                                <a class="row-action" data-action="sendToChat" data-item="{{item._id}}" data-tooltip="{{localize 'SendToChat'}}"><i class="fas fa-message"></i></a>
+                                                <a class="row-action" data-action="delete" data-item="{{item._id}}" data-tooltip="{{ localize 'Delete' }}"><i class="fas fa-delete-left"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </section>
+            </div>
+
+        </section>
+    </section>
+</form>
